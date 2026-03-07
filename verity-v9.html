@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verity — AI-Assisted Clinical Decision Support</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --navy:#0B1F3A;
+  --teal:#0A9E8E;
+  --teal-bright:#0CC4B0;
+  --teal-dim:rgba(10,158,142,.11);
+  --teal-dim2:rgba(10,158,142,.06);
+  --white:#fff;
+  --surface:#F3F6FB;
+  --surface2:#EBF0F7;
+  --border:#DDE4EF;
+  --border-light:#EEF2F8;
+  --text1:#0D1B2E;
+  --text2:#4A5E78;
+  --text3:#8899B0;
+  --text4:#AAB8CB;
+  --red:#C93535;
+  --red-dim:rgba(201,53,53,.09);
+  --red-dim2:rgba(201,53,53,.05);
+  --amber:#C97B1A;
+  --amber-dim:rgba(201,123,26,.10);
+  --amber-dim2:rgba(201,123,26,.05);
+  --green:#0B956A;
+  --green-dim:rgba(11,149,106,.10);
+  --grad:linear-gradient(140deg,#0B1F3A 0%,#0E3060 55%,#0A4060 100%);
+  --grad-teal:linear-gradient(135deg,#0A9E8E,#0CC4B0);
+  --shadow-xs:0 1px 3px rgba(11,31,58,.07);
+  --shadow-sm:0 2px 8px rgba(11,31,58,.08);
+  --shadow-md:0 6px 20px rgba(11,31,58,.11);
+  --shadow-lg:0 14px 44px rgba(11,31,58,.15);
+  --r:10px;--r-lg:14px;--r-xl:20px;
+  --sidebar:220px;--topbar:58px;
+  --f-head:'Syne',sans-serif;
+  --f-body:'DM Sans',sans-serif;
+  --f-mono:'JetBrains Mono',monospace;
+}
+
+html,body{height:100%;font-family:var(--f-body);background:var(--surface);color:var(--text1);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+
+.screen{display:none;width:100%;min-height:100vh}
+.screen.active{display:flex}
+
+/* ═══════════════════════════════════════
+   LOGIN
+═══════════════════════════════════════ */
+#s-login{background:var(--grad);align-items:center;justify-content:center;position:relative;overflow:hidden}
+.lg-mesh{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 70% at 15% 25%,rgba(10,158,142,.19) 0%,transparent 58%),radial-gradient(ellipse 50% 60% at 85% 78%,rgba(10,64,100,.48) 0%,transparent 58%)}
+.lg-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);background-size:44px 44px}
+.lg-wrap{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:960px;width:100%;padding:60px 40px;animation:fadeUp .65s ease both}
+.lg-brand{color:#fff}
+.lg-logo{display:flex;align-items:center;gap:12px;margin-bottom:30px}
+.lg-logo-icon{width:50px;height:50px;border-radius:13px;background:var(--grad-teal);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(10,158,142,.44)}
+.lg-logo-icon svg{width:26px;height:26px;color:#fff}
+.lg-wordmark{font-family:var(--f-head);font-size:30px;font-weight:800;letter-spacing:-.6px}
+.lg-sub{font-size:10.5px;font-weight:500;color:rgba(255,255,255,.42);letter-spacing:1.4px;text-transform:uppercase;margin-top:2px}
+.lg-headline{font-family:var(--f-head);font-size:40px;font-weight:700;line-height:1.12;margin-bottom:18px;letter-spacing:-.5px}
+.lg-headline em{color:var(--teal-bright);font-style:normal}
+.lg-desc{font-size:14px;color:rgba(255,255,255,.55);line-height:1.75;max-width:340px}
+.lg-card{background:rgba(255,255,255,.97);border-radius:var(--r-xl);padding:40px 38px;box-shadow:0 28px 70px rgba(0,0,0,.27),0 0 0 1px rgba(255,255,255,.08)}
+.lg-card-title{font-family:var(--f-head);font-size:20px;font-weight:700;margin-bottom:5px}
+.lg-card-sub{font-size:12.5px;color:var(--text3);margin-bottom:28px}
+.demo-badge{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:13px 16px;margin-bottom:24px;display:flex;align-items:center;gap:12px}
+.demo-avatar{width:40px;height:40px;border-radius:50%;background:var(--grad-teal);display:flex;align-items:center;justify-content:center;font-family:var(--f-head);font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.demo-name{font-weight:600;font-size:13.5px}
+.demo-role{font-size:11.5px;color:var(--text3);margin-top:1px}
+.lg-btn{width:100%;padding:14px;background:var(--grad);color:#fff;border:none;border-radius:var(--r);font-family:var(--f-body);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 4px 18px rgba(11,31,58,.27);position:relative;overflow:hidden}
+.lg-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(10,158,142,.35),transparent);opacity:0;transition:opacity .2s}
+.lg-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(11,31,58,.32)}
+.lg-btn:hover::after{opacity:1}
+.lg-foot{margin-top:20px;font-size:11px;color:var(--text3);text-align:center;line-height:1.7}
+.proto-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(201,123,26,.11);color:var(--amber);border:1px solid rgba(201,123,26,.22);border-radius:99px;padding:3px 10px;font-size:10.5px;font-weight:600;letter-spacing:.3px}
+.proto-pill-sm{display:inline-flex;align-items:center;gap:4px;background:rgba(201,123,26,.09);color:var(--amber);border:1px solid rgba(201,123,26,.18);border-radius:99px;padding:2px 9px;font-size:10px;font-weight:600;letter-spacing:.3px;cursor:default}
+
+/* ═══════════════════════════════════════
+   APP SHELL
+═══════════════════════════════════════ */
+.app{flex-direction:row;width:100%;min-height:100vh;background:var(--surface)}
+
+/* ─ SIDEBAR ─ */
+.sidebar{width:var(--sidebar);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200}
+.sb-brand{padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-logo{display:flex;align-items:center;gap:10px}
+.sb-logo-icon{width:34px;height:34px;border-radius:9px;background:var(--grad-teal);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(10,158,142,.36);flex-shrink:0}
+.sb-logo-icon svg{width:17px;height:17px;color:#fff}
+.sb-name{font-family:var(--f-head);font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.sb-sub{font-size:9.5px;color:rgba(255,255,255,.32);letter-spacing:.9px;text-transform:uppercase;margin-top:1px}
+.sb-nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:1px}
+.sb-section{font-size:9.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.20);padding:10px 10px 5px}
+
+/* Active nav items */
+.nav-i{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;color:rgba(255,255,255,.46);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.nav-i svg{width:15px;height:15px;flex-shrink:0}
+.nav-i:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.80)}
+.nav-i.on{background:rgba(10,158,142,.17);color:var(--teal-bright)}
+
+/* Inactive/upcoming sidebar items — clearly secondary */
+.nav-i.inactive{opacity:.38;cursor:default;pointer-events:none}
+.nav-i.inactive:hover{background:transparent;color:rgba(255,255,255,.38)}
+.nav-i.inactive .nav-upcoming{font-size:9.5px;margin-left:auto;background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);border-radius:4px;padding:1px 6px;letter-spacing:.3px}
+
+.sb-foot{padding:12px 10px;border-top:1px solid rgba(255,255,255,.07)}
+.sb-doc{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .15s}
+.sb-doc:hover{background:rgba(255,255,255,.06)}
+.sb-av{width:30px;height:30px;border-radius:50%;background:var(--grad-teal);display:flex;align-items:center;justify-content:center;font-family:var(--f-head);font-size:11px;font-weight:700;color:#fff}
+.sb-doc-name{font-size:12.5px;font-weight:600;color:rgba(255,255,255,.78)}
+.sb-doc-role{font-size:10.5px;color:rgba(255,255,255,.30)}
+
+/* ─ MAIN ─ */
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:var(--topbar);background:var(--white);border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-xs)}
+.bc{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text3)}
+.bc .sep{opacity:.4;font-size:11px}
+.bc .cur{color:var(--text1);font-weight:600}
+.bc span.lnk{cursor:pointer;transition:color .15s}
+.bc span.lnk:hover{color:var(--teal)}
+.tb-right{display:flex;align-items:center;gap:10px}
+.tb-clock{font-size:11.5px;color:var(--text3);font-family:var(--f-mono)}
+.tb-notif{width:33px;height:33px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .15s}
+.tb-notif:hover{background:var(--surface2)}
+.tb-notif svg{width:15px;height:15px;color:var(--text2)}
+.notif-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid #fff}
+
+.page{flex:1;padding:26px;overflow-y:auto}
+.ph{margin-bottom:22px}
+.ph-title{font-family:var(--f-head);font-size:22px;font-weight:700;letter-spacing:-.3px}
+.ph-sub{font-size:12.5px;color:var(--text3);margin-top:4px}
+
+/* ─ CARDS ─ */
+.card{background:var(--white);border-radius:var(--r-lg);border:1px solid var(--border-light);box-shadow:var(--shadow-sm)}
+.card-hd{padding:14px 18px 12px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:var(--f-head);font-size:13.5px;font-weight:700}
+.card-bd{padding:18px}
+
+/* ─ STAT CARDS ─ */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.stat-c{background:var(--white);border-radius:var(--r-lg);padding:16px 18px;border:1px solid var(--border-light);box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:default}
+.stat-c:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.stat-c::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-c.cn::before{background:var(--navy)}.stat-c.ct::before{background:var(--grad-teal)}.stat-c.cr::before{background:var(--red)}.stat-c.cg::before{background:var(--green)}
+.stat-lbl{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.4px;text-transform:uppercase;margin-bottom:7px}
+.stat-val{font-family:var(--f-head);font-size:30px;font-weight:800;line-height:1;letter-spacing:-1px}
+.stat-c.cn .stat-val{color:var(--navy)}.stat-c.ct .stat-val{color:var(--teal)}.stat-c.cr .stat-val{color:var(--red)}.stat-c.cg .stat-val{color:var(--green)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:5px}
+.stat-ico{position:absolute;right:14px;bottom:12px;width:30px;height:30px;opacity:.07}
+.stat-ico svg{width:30px;height:30px}
+
+/* ─ ALERT BAND ─ */
+.alert-band{background:var(--red-dim2);border:1px solid rgba(201,53,53,.17);border-left:4px solid var(--red);border-radius:var(--r);padding:10px 14px;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.alert-band svg{width:15px;height:15px;color:var(--red);flex-shrink:0}
+.alert-band-txt{font-size:13px;font-weight:500;color:var(--red);flex:1}
+.alert-band-txt strong{font-weight:700}
+.alert-band-link{font-size:12px;font-weight:700;color:var(--red);cursor:pointer;white-space:nowrap;text-decoration:underline;text-decoration-style:dotted}
+
+/* ─ TABLE ─ */
+.dt{width:100%;border-collapse:collapse}
+.dt th{text-align:left;font-size:10.5px;font-weight:700;color:var(--text3);letter-spacing:.7px;text-transform:uppercase;padding:0 16px 10px;border-bottom:1px solid var(--border-light)}
+.dt td{padding:11px 16px;border-bottom:1px solid var(--border-light);font-size:13px;vertical-align:middle}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surface)}
+.pt-code{font-family:var(--f-mono);font-size:11.5px;font-weight:500;color:var(--navy)}
+.rb{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;white-space:nowrap}
+.rb::before{content:'';width:6px;height:6px;border-radius:50%}
+.rb.hi{background:var(--red-dim);color:var(--red)}.rb.hi::before{background:var(--red)}
+.rb.md{background:var(--amber-dim);color:var(--amber)}.rb.md::before{background:var(--amber)}
+.rb.lo{background:var(--green-dim);color:var(--green)}.rb.lo::before{background:var(--green)}
+.rb.pn{background:var(--surface2);color:var(--text3)}.rb.pn::before{background:var(--text3)}
+.tbl-btn{padding:5px 13px;border-radius:6px;border:1.5px solid var(--teal);color:var(--teal);background:transparent;font-family:var(--f-body);font-size:11.5px;font-weight:700;cursor:pointer;transition:all .15s}
+.tbl-btn:hover{background:var(--teal);color:#fff}
+.tbl-btn.pri{background:var(--teal);color:#fff;border-color:var(--teal)}
+.tbl-btn.pri:hover{background:var(--teal-bright)}
+.dt td .date{font-size:11.5px;color:var(--text3);font-family:var(--f-mono)}
+
+.fab{position:fixed;right:28px;bottom:28px;z-index:90;display:flex;align-items:center;gap:9px;padding:13px 22px;border-radius:99px;background:var(--grad);color:#fff;border:none;font-family:var(--f-body);font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 6px 28px rgba(11,31,58,.28),0 0 0 1px rgba(10,158,142,.22);transition:all .2s}
+.fab:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(11,31,58,.33)}
+.fab svg{width:15px;height:15px}
+
+/* ═══════════════════════════════════════
+   CASE FORM
+═══════════════════════════════════════ */
+.cf-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.fs{margin-bottom:18px}
+.fs-title{font-size:10.5px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--text3);margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.fs-title::after{content:'';flex:1;height:1px;background:var(--border-light)}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.fg-1{display:flex;flex-direction:column;gap:4px}
+.fl{font-size:11px;font-weight:600;color:var(--text2)}
+.fi,.fsel{padding:8px 11px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);font-family:var(--f-body);font-size:13px;color:var(--text1);outline:none;transition:border-color .15s,background .15s;width:100%}
+.fi:focus,.fsel:focus{border-color:var(--teal);background:#fff}
+.fi.mono{font-family:var(--f-mono)}
+.fi.warn{border-color:var(--amber);background:rgba(201,123,26,.04)}
+.fi.danger{border-color:var(--red);background:rgba(201,53,53,.04)}
+.f-warn{font-size:10.5px;font-weight:600;color:var(--amber);display:flex;align-items:center;gap:3px;margin-top:2px}
+.f-warn.red{color:var(--red)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:4px 12px;border-radius:99px;font-size:12px;font-weight:500;border:1.5px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;transition:all .15s}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.fta{width:100%;min-height:200px;padding:13px;border:1.5px solid var(--border);border-radius:var(--r);background:var(--surface);font-family:var(--f-body);font-size:13.5px;color:var(--text1);line-height:1.75;resize:vertical;outline:none;transition:border-color .15s}
+.fta:focus{border-color:var(--teal);background:#fff}
+.fta-meta{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.fta-cnt{font-size:11px;color:var(--text3);font-family:var(--f-mono)}
+
+/* Passive button — clearly inactive style */
+.btn-passive{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 11px;border-radius:6px;
+  border:1.5px solid var(--border-light);color:var(--text4);
+  background:var(--surface2);font-family:var(--f-body);
+  font-size:11.5px;font-weight:500;
+  cursor:not-allowed;opacity:.55;pointer-events:none;
+}
+.btn-passive svg{width:11px;height:11px}
+
+.btn-ghost{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;border:1.5px solid var(--border);color:var(--text2);background:transparent;font-family:var(--f-body);font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-ghost:hover{background:var(--surface2);border-color:var(--text3)}
+
+.prog-bar{height:5px;background:var(--border-light);border-radius:99px;overflow:hidden;margin-bottom:5px}
+.prog-fill{height:100%;background:var(--grad-teal);border-radius:99px;transition:width .4s}
+.prog-lbl{font-size:11.5px;color:var(--text3);font-weight:500}
+.form-foot{background:var(--white);border-top:1px solid var(--border-light);padding:14px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;bottom:0;z-index:50;box-shadow:0 -4px 18px rgba(11,31,58,.06)}
+.ff-l{display:flex;flex-direction:column;gap:2px;flex:1;max-width:320px}
+.ff-r{display:flex;align-items:center;gap:10px}
+.btn-sec{padding:10px 20px;border-radius:var(--r);border:1.5px solid var(--border);color:var(--text2);background:#fff;font-family:var(--f-body);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-sec:hover{border-color:var(--text3);background:var(--surface)}
+.btn-pri{padding:11px 22px;border-radius:var(--r);border:none;color:#fff;background:var(--grad);font-family:var(--f-body);font-size:13.5px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px;box-shadow:0 4px 18px rgba(11,31,58,.24);position:relative;overflow:hidden}
+.btn-pri::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(10,158,142,.38),transparent);opacity:0;transition:opacity .2s}
+.btn-pri:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(11,31,58,.28)}
+.btn-pri:hover::after{opacity:1}
+.btn-pri svg{width:15px;height:15px}
+.drug-row{display:flex;align-items:center;gap:8px;padding:8px 11px;background:var(--surface);border-radius:7px;border:1px solid var(--border-light);font-size:13px;font-weight:500}
+.drug-row svg{width:13px;height:13px;color:var(--teal);flex-shrink:0}
+
+/* ═══════════════════════════════════════
+   RESULTS SCREEN
+═══════════════════════════════════════ */
+.res-layout{display:grid;grid-template-columns:1fr 354px;gap:18px;align-items:start}
+.res-left{display:flex;flex-direction:column;gap:14px}
+.res-right{position:sticky;top:calc(var(--topbar) + 26px);height:calc(100vh - var(--topbar) - 52px);display:flex;flex-direction:column}
+
+/* Section header */
+.sec-hd{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.sec-hd-title{font-family:var(--f-head);font-size:14px;font-weight:700}
+.ico-wrap{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ico-wrap svg{width:12px;height:12px}
+.ico-wrap.teal{background:var(--teal-dim)}.ico-wrap.teal svg{color:var(--teal)}
+.ico-wrap.red{background:var(--red-dim)}.ico-wrap.red svg{color:var(--red)}
+.ico-wrap.amber{background:var(--amber-dim)}.ico-wrap.amber svg{color:var(--amber)}
+.ico-wrap.slate{background:var(--surface2)}.ico-wrap.slate svg{color:#7A8FA8}
+.ico-wrap.navy{background:rgba(11,31,58,.08)}.ico-wrap.navy svg{color:var(--navy)}
+
+/* ── GENEL RİSK SKORU KARTI ── */
+.grs-card{
+  background:var(--white);border-radius:var(--r-lg);
+  border:1px solid var(--border-light);box-shadow:var(--shadow-md);
+  overflow:hidden;
+}
+.grs-top{
+  background:linear-gradient(120deg,#0B1F3A 0%,#0E2E5A 50%,#0A3C55 100%);
+  padding:22px 26px 20px;
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;
+  position:relative;overflow:hidden;
+}
+.grs-top::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 55% 110% at 95% 50%,rgba(10,158,142,.20) 0%,transparent 60%);
+}
+.grs-top-left{position:relative;z-index:1}
+.grs-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:6px}
+.grs-title{font-family:var(--f-head);font-size:18px;font-weight:800;color:#fff;letter-spacing:-.3px;margin-bottom:4px}
+.grs-summary{font-size:12px;color:rgba(255,255,255,.52);line-height:1.6;max-width:440px}
+.grs-top-right{position:relative;z-index:1;text-align:right;flex-shrink:0}
+.grs-lvl-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:99px;background:rgba(201,53,53,.28);border:1px solid rgba(201,53,53,.38);font-size:11.5px;font-weight:700;color:#FF9090;white-space:nowrap;margin-bottom:8px}
+.grs-lvl-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:#FF7070;animation:pulse-dot 2s infinite}
+.grs-score-display{display:flex;align-items:baseline;gap:4px;justify-content:flex-end}
+.grs-num{font-family:var(--f-mono);font-size:52px;font-weight:600;line-height:1;color:#fff}
+.grs-denom{font-family:var(--f-mono);font-size:18px;color:rgba(255,255,255,.38)}
+.grs-body{padding:18px 26px}
+.grs-bar-wrap{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.grs-bar-bg{flex:1;height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.grs-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#C93535,#E55555,#EF8040);transition:width 1.2s ease}
+.grs-bar-pct{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--red);flex-shrink:0}
+.grs-foot{display:flex;align-items:center;justify-content:space-between}
+.grs-meta{font-size:11.5px;color:var(--text3);display:flex;align-items:center;gap:12px}
+.grs-meta-item{display:flex;align-items:center;gap:4px}
+.grs-meta-item svg{width:11px;height:11px;color:var(--text4)}
+.rc-detail{font-size:12px;color:var(--teal);font-weight:600;cursor:pointer}
+.rc-detail:hover{text-decoration:underline}
+
+/* ── DETAYLI RİSK KIRILIMI (collapsible) ── */
+.breakdown-wrap{
+  background:var(--white);border-radius:var(--r-lg);
+  border:1px solid var(--border-light);box-shadow:var(--shadow-sm);
+  overflow:hidden;
+}
+.breakdown-hd{
+  padding:14px 18px;display:flex;align-items:center;gap:10px;
+  cursor:pointer;user-select:none;transition:background .15s;
+}
+.breakdown-hd:hover{background:var(--surface)}
+.breakdown-hd-left{display:flex;align-items:center;gap:8px;flex:1}
+.breakdown-title{font-family:var(--f-head);font-size:13.5px;font-weight:700}
+.breakdown-sub{font-size:11.5px;color:var(--text3);margin-left:4px}
+.breakdown-chevron{
+  width:22px;height:22px;border-radius:6px;background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:transform .25s;
+}
+.breakdown-chevron svg{width:11px;height:11px;color:var(--text3)}
+.breakdown-wrap.open .breakdown-chevron{transform:rotate(180deg)}
+.breakdown-body{
+  display:none;padding:0 18px 18px;
+  border-top:1px solid var(--border-light);
+}
+.breakdown-wrap.open .breakdown-body{display:block}
+.breakdown-intro{font-size:11.5px;color:var(--text3);padding:12px 0 14px;line-height:1.6;font-style:italic}
+.bk-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.bk-cat{
+  border-radius:var(--r);border:1px solid var(--border-light);
+  overflow:hidden;background:var(--surface);
+  transition:border-color .15s,box-shadow .15s;
+}
+.bk-cat:hover{border-color:var(--border);box-shadow:var(--shadow-sm)}
+.bk-cat-top{padding:11px 13px 9px}
+.bk-cat-label{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
+.bk-cat-name{font-family:var(--f-head);font-size:13px;font-weight:700;line-height:1.25;margin-bottom:8px}
+.bk-lvl{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap;display:inline-block;margin-bottom:6px}
+.bk-lvl.hi{background:var(--red-dim);color:var(--red)}
+.bk-lvl.md{background:var(--amber-dim);color:var(--amber)}
+.bk-lvl.lo{background:var(--surface2);color:#7A8FA8}
+.bk-score-row{display:flex;align-items:baseline;gap:3px;margin-bottom:6px}
+.bk-num{font-family:var(--f-mono);font-size:24px;font-weight:600;line-height:1}
+.bk-cat.hi .bk-num{color:var(--red)}.bk-cat.md .bk-num{color:var(--amber)}.bk-cat.lo .bk-num{color:#7A8FA8}
+.bk-den{font-family:var(--f-mono);font-size:12px;color:var(--text3)}
+.bk-bar-bg{height:4px;background:var(--border-light);border-radius:99px;overflow:hidden;margin-bottom:0}
+.bk-bar-fill{height:100%;border-radius:99px;transition:width 1.1s ease}
+.bk-cat.hi .bk-bar-fill{background:linear-gradient(90deg,var(--red),#E06060)}
+.bk-cat.md .bk-bar-fill{background:linear-gradient(90deg,var(--amber),#E0A030)}
+.bk-cat.lo .bk-bar-fill{background:linear-gradient(90deg,#7A8FA8,#9AAEC5)}
+.bk-detail{border-top:1px solid var(--border-light);padding:9px 13px}
+.bk-disease-item{font-size:11.5px;color:var(--text2);padding:4px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-light)}
+.bk-disease-item:last-child{border-bottom:none}
+.bk-disease-name{font-weight:500}
+.bk-disease-score{font-family:var(--f-mono);font-size:11px;font-weight:600;color:var(--text3)}
+.bk-disease-lvl{font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px}
+.bk-disease-lvl.hi{background:var(--red-dim);color:var(--red)}
+.bk-disease-lvl.md{background:var(--amber-dim);color:var(--amber)}
+.bk-disease-lvl.lo{background:var(--surface2);color:#7A8FA8}
+
+/* Alert items */
+.al-list{display:flex;flex-direction:column;gap:7px}
+.al-item{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-radius:var(--r);border-left:4px solid}
+.al-item.crit{background:var(--red-dim2);border-color:var(--red)}
+.al-item.warn{background:var(--amber-dim2);border-color:var(--amber)}
+.al-item svg{width:13px;height:13px;flex-shrink:0;margin-top:2px}
+.al-item.crit svg{color:var(--red)}.al-item.warn svg{color:var(--amber)}
+.al-txt{font-size:12.5px;line-height:1.55}
+.al-item.crit .al-txt{color:var(--red)}.al-item.warn .al-txt{color:var(--amber)}
+.al-txt strong{font-weight:700}
+
+/* Factors — primary visual weight */
+.fac-list{display:flex;flex-direction:column;gap:11px}
+.fac{cursor:pointer}
+.fac-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.fac-name{font-size:13px;font-weight:600;color:var(--text1)}
+.fac-pct{font-family:var(--f-mono);font-size:12.5px;font-weight:700;color:var(--text2)}
+.fac-bar-bg{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.fac-fill{height:100%;border-radius:99px;transition:width 1.3s ease}
+.fac-fill.str{background:linear-gradient(90deg,#C93535,#E05858)}
+.fac-fill.mod{background:linear-gradient(90deg,#C97B1A,#E09830)}
+.fac-fill.std{background:linear-gradient(90deg,var(--teal),var(--teal-bright))}
+.fac-desc{font-size:11.5px;color:var(--text2);margin-top:7px;line-height:1.65;display:none;padding:9px 12px;background:var(--surface);border-radius:8px;border-left:3px solid var(--border)}
+.fac.open .fac-desc{display:block}
+.fac-hint{font-size:11px;color:var(--text4);margin-top:2px;font-style:italic}
+
+/* Missing info — secondary visual weight */
+.mi-list{display:flex;flex-direction:column;gap:6px}
+.mi-item{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;border-radius:8px;background:var(--surface);border:1px solid var(--border-light);cursor:default;transition:border-color .15s}
+.mi-item:hover{border-color:var(--border)}
+.mi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.mi-dot.crit{background:var(--red)}.mi-dot.rec{background:var(--amber)}.mi-dot.opt{background:var(--border)}
+.mi-body{flex:1}
+.mi-name{font-size:12.5px;font-weight:600;color:var(--text1)}
+.mi-desc{font-size:11.5px;color:var(--text2);margin-top:2px;line-height:1.5}
+.mi-note{font-size:11px;color:var(--text3);margin-top:3px;font-style:italic}
+
+/* Klinik Seyir — calm secondary block */
+.ks-box{border-radius:var(--r-lg);border:1px solid var(--border-light);overflow:hidden;box-shadow:var(--shadow-sm)}
+.ks-top{background:linear-gradient(115deg,#0B1F3A 0%,#0E2E58 60%,#0A3C55 100%);padding:15px 18px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden}
+.ks-top::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 100% at 90% 50%,rgba(10,158,142,.14) 0%,transparent 60%)}
+.ks-top-icon{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.11);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+.ks-top-icon svg{width:17px;height:17px;color:var(--teal-bright)}
+.ks-top-text{position:relative;z-index:1;flex:1}
+.ks-lbl-sm{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:2px}
+.ks-verdict{font-family:var(--f-head);font-size:15px;font-weight:700;color:#fff;letter-spacing:-.2px}
+.ks-verdict-sub{font-size:11.5px;color:rgba(255,255,255,.48);margin-top:2px}
+.ks-badge{position:relative;z-index:1;flex-shrink:0;display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;background:rgba(201,53,53,.22);border:1px solid rgba(201,53,53,.30);font-size:10.5px;font-weight:700;color:#FF9090}
+.ks-badge svg{width:10px;height:10px}
+.ks-body{background:#fff;padding:15px 18px;display:flex;flex-direction:column;gap:12px}
+
+/* Timeline */
+.ks-timeline{display:flex;align-items:stretch;gap:0;position:relative;padding-bottom:6px;margin-bottom:2px}
+.ks-timeline::before{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--border-light)}
+.ks-yr{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;padding-bottom:14px}
+.ks-dot{width:10px;height:10px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1.5px var(--border);margin-bottom:5px;position:relative;z-index:1}
+.ks-dot.lo{background:var(--green)}.ks-dot.md{background:var(--amber)}.ks-dot.hi{background:var(--red)}
+.ks-dot.cur{background:var(--red);box-shadow:0 0 0 3px rgba(201,53,53,.20),0 0 0 1.5px var(--red);animation:pulse-red 1.8s infinite}
+.ks-connector{position:absolute;top:4px;left:50%;right:-50%;height:2px;z-index:0}
+.ks-connector.lo{background:linear-gradient(90deg,var(--green),var(--amber))}
+.ks-connector.md{background:linear-gradient(90deg,var(--amber),var(--red))}
+.ks-connector.hi{background:var(--red)}
+.ks-yr-lbl{font-size:10.5px;font-family:var(--f-mono);color:var(--text3)}
+.ks-yr-val{font-size:11px;font-weight:700;margin-top:1px}
+.ks-yr.c .ks-yr-val{color:var(--red)}
+.ks-yr:not(.c) .ks-yr-val{color:var(--text2)}
+
+.ks-meta-row{display:flex;gap:7px;flex-wrap:wrap}
+.ks-chip{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:7px;font-size:11px;font-weight:500;border:1px solid}
+.ks-chip.neg{background:var(--red-dim2);border-color:rgba(201,53,53,.15);color:var(--red)}
+.ks-chip.warn{background:var(--amber-dim2);border-color:rgba(201,123,26,.14);color:var(--amber)}
+.ks-chip.info{background:var(--teal-dim2);border-color:rgba(10,158,142,.14);color:var(--teal)}
+.ks-chip svg{width:10px;height:10px}
+.ks-note{font-size:11px;color:var(--text3);line-height:1.65;padding-top:8px;border-top:1px solid var(--border-light)}
+
+/* Disclaimer */
+.disc{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--r);padding:10px 15px;display:flex;align-items:flex-start;gap:9px}
+.disc svg{width:13px;height:13px;color:var(--text3);flex-shrink:0;margin-top:2px}
+.disc p{font-size:11px;color:var(--text3);line-height:1.65}
+.disc p strong{color:var(--text2)}
+
+/* Demo tag — used sparingly */
+.dtag{display:inline-block;font-size:9px;font-weight:600;background:rgba(74,94,120,.10);color:var(--text3);border-radius:3px;padding:1px 5px;margin-left:5px;vertical-align:middle}
+
+/* ═══════════════════════════════════════
+   AI ASSISTANT PANEL
+═══════════════════════════════════════ */
+.ast-panel{background:var(--white);border-radius:var(--r-lg);border:1px solid var(--border-light);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;height:100%;overflow:hidden}
+.ast-hd{padding:13px 15px 11px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ast-av{width:34px;height:34px;border-radius:10px;background:var(--grad-teal);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(10,158,142,.30)}
+.ast-av svg{width:16px;height:16px;color:#fff}
+.ast-name{font-family:var(--f-head);font-size:13px;font-weight:700}
+.ast-status{font-size:10.5px;color:var(--text3);display:flex;align-items:center;gap:4px;margin-top:1px}
+.st-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse-dot 2s infinite}
+.ast-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:9px}
+.msg{display:flex;flex-direction:column;gap:4px;animation:msgIn .28s ease both}
+.msg.u{align-items:flex-end}.msg.a{align-items:flex-start}
+.msg-b{padding:8px 12px;border-radius:11px;font-size:12px;line-height:1.65;max-width:92%}
+.msg.u .msg-b{background:var(--navy);color:#fff;border-bottom-right-radius:3px}
+.msg.a .msg-b{background:var(--surface);color:var(--text1);border-bottom-left-radius:3px;border:1px solid var(--border-light)}
+.msg-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px}
+.mtag{font-size:9.5px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--surface2);color:var(--text3);border:1px solid var(--border-light)}
+.mtag.model{color:var(--teal);background:var(--teal-dim2);border-color:rgba(10,158,142,.14)}
+.ast-sugg{padding:9px 12px;border-top:1px solid var(--border-light);flex-shrink:0}
+.sugg-lbl{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:7px}
+.sugg-btns{display:flex;flex-direction:column;gap:4px}
+.sugg-btn{padding:6px 10px;border-radius:7px;border:1.5px solid var(--border);background:var(--surface);font-family:var(--f-body);font-size:11px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;text-align:left;display:flex;align-items:center;gap:6px}
+.sugg-btn:hover{background:var(--teal-dim);border-color:rgba(10,158,142,.26);color:var(--teal)}
+.sugg-btn svg{width:10px;height:10px;flex-shrink:0}
+.ast-inp{padding:10px 12px;border-top:1px solid var(--border-light);display:flex;gap:7px;align-items:center;flex-shrink:0}
+.chat-in{flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);font-family:var(--f-body);font-size:12.5px;color:var(--text1);outline:none;transition:border-color .15s}
+.chat-in:focus{border-color:var(--teal);background:#fff}
+.chat-send{width:34px;height:34px;border-radius:8px;background:var(--teal);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.chat-send:hover{background:var(--teal-bright)}
+.chat-send svg{width:14px;height:14px;color:#fff}
+.typing{display:none;align-items:center;gap:5px;padding:8px 12px}
+.typing.show{display:flex}
+.ty-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:ty-bounce 1.2s infinite}
+.ty-dot:nth-child(2){animation-delay:.2s}.ty-dot:nth-child(3){animation-delay:.4s}
+.ty-lbl{font-size:10.5px;color:var(--text3);margin-left:4px}
+
+/* ═══════════════════════════════════════
+   LOADING MODAL
+═══════════════════════════════════════ */
+.modal-bg{display:none;position:fixed;inset:0;z-index:1000;background:rgba(11,31,58,.52);backdrop-filter:blur(7px);align-items:center;justify-content:center}
+.modal-bg.on{display:flex}
+.ld-modal{background:#fff;border-radius:var(--r-xl);padding:46px 54px;text-align:center;min-width:360px;box-shadow:var(--shadow-lg),0 0 0 1px var(--border-light);animation:fadeUp .38s ease}
+.ld-spin{width:62px;height:62px;border-radius:17px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;animation:spin-pulse 1.8s ease infinite;box-shadow:0 8px 26px rgba(11,31,58,.22)}
+.ld-spin svg{width:30px;height:30px;color:#fff}
+.ld-title{font-family:var(--f-head);font-size:18px;font-weight:700;margin-bottom:5px}
+.ld-step{font-size:13px;color:var(--text3);min-height:20px;transition:opacity .25s}
+.ld-prog{margin-top:18px;height:4px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.ld-fill{height:100%;background:var(--grad-teal);border-radius:99px;width:0;transition:width .45s ease}
+.ld-dots{display:flex;justify-content:center;gap:6px;margin-top:14px}
+.ld-dot{width:7px;height:7px;border-radius:50%;background:var(--border)}
+.ld-dot.on{background:var(--teal);animation:dot-blink .55s ease infinite}
+
+/* ═══════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin-pulse{0%,100%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.06) rotate(4deg)}}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 0 3px rgba(201,53,53,.22),0 0 0 1.5px var(--red)}50%{box-shadow:0 0 0 6px rgba(201,53,53,.10),0 0 0 1.5px var(--red)}}
+@keyframes dot-blink{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
+@keyframes msgIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ty-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+.a0{animation:fadeUp .5s ease both}
+.a1{animation:fadeUp .5s .10s ease both}
+.a2{animation:fadeUp .5s .18s ease both}
+.a3{animation:fadeUp .5s .26s ease both}
+.a4{animation:fadeUp .5s .34s ease both}
+.a5{animation:fadeUp .5s .42s ease both}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     S1 · GİRİŞ
+═══════════════════════════════════════════════ -->
+<div id="s-login" class="screen active">
+  <div class="lg-mesh"></div>
+  <div class="lg-grid"></div>
+  <div class="lg-wrap">
+    <div class="lg-brand">
+      <div class="lg-logo">
+        <div class="lg-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <div><div class="lg-wordmark">Verity</div><div class="lg-sub">AI-Assisted Clinical Decision Support</div></div>
+      </div>
+      <div class="lg-headline">Daha net klinik<br>kararlar için<br><em>yapay zeka desteği.</em></div>
+      <div class="lg-desc">Verity, yapılandırılmış hasta verisi ve serbest metin anamnezini açıklanabilir risk analizine dönüştürür. Nihai karar her zaman hekime aittir.</div>
+    </div>
+    <div class="lg-card">
+      <div class="lg-card-title">Sisteme Giriş</div>
+      <div class="lg-card-sub">Demo Erişimi — Acıbadem Sağlık Grubu</div>
+      <div class="demo-badge">
+        <div class="demo-avatar">AK</div>
+        <div><div class="demo-name">Dr. Ayşe Kaya</div><div class="demo-role">İç Hastalıkları Uzmanı · Acıbadem Maslak</div></div>
+      </div>
+      <button class="lg-btn" onclick="goTo('dashboard')">Demo Olarak Giriş Yap &nbsp;→</button>
+      <div class="lg-foot">
+        <span class="proto-pill">⚙ Prototip Demo Modu</span><br><br>
+        Bu sistem klinik karar desteği sağlar; tanı koymaz.<br>Gerçek hasta verisi işlenmemektedir.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     S2 · DASHBOARD
+═══════════════════════════════════════════════ -->
+<div id="s-dashboard" class="screen app">
+  <aside class="sidebar">
+    <div class="sb-brand"><div class="sb-logo"><div class="sb-logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div><div class="sb-name">Verity</div><div class="sb-sub">AI-Assisted CDS</div></div></div></div>
+    <nav class="sb-nav">
+      <div class="sb-section">Ana Menü</div>
+      <div class="nav-i on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Genel Bakış</div>
+      <div class="nav-i" onclick="openNewCase()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Yeni Vaka</div>
+      <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Aktif Vakalar</div>
+      <div class="sb-section">Çıktılar</div>
+      <div class="nav-i inactive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Raporlar<span class="nav-upcoming">Yakında</span></div>
+      <div class="nav-i inactive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M21 12h-2M5 12H3"/></svg>Ayarlar<span class="nav-upcoming">Yakında</span></div>
+    </nav>
+    <div class="sb-foot"><div class="sb-doc"><div class="sb-av">AK</div><div><div class="sb-doc-name">Dr. A. Kaya</div><div class="sb-doc-role">İç Hastalıkları</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="bc"><span>Verity</span><span class="sep">›</span><span class="cur">Genel Bakış</span></div>
+      <div class="tb-right">
+        <span class="proto-pill-sm">⚙ Prototip Demo Modu</span>
+        <span class="tb-clock" id="clk1">09:47</span>
+        <div class="tb-notif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg><div class="notif-dot"></div></div>
+      </div>
+    </div>
+    <div class="page">
+      <div class="ph a0"><div class="ph-title">Genel Bakış</div><div class="ph-sub">Bugün, 7 Mart 2026 &nbsp;·&nbsp; Acıbadem Maslak &nbsp;·&nbsp; İç Hastalıkları Kliniği</div></div>
+      <div class="stat-row a1">
+        <div class="stat-c cn"><div class="stat-lbl">Bugünkü Vakalar</div><div class="stat-val">7</div><div class="stat-sub">+2 dün ile kıyasla</div><div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/><circle cx="9" cy="7" r="4"/></svg></div></div>
+        <div class="stat-c ct"><div class="stat-lbl">Analiz Bekleyen</div><div class="stat-val">2</div><div class="stat-sub">Henüz çalıştırılmamış</div><div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div>
+        <div class="stat-c cr"><div class="stat-lbl">Yüksek Risk Uyarısı</div><div class="stat-val">3</div><div class="stat-sub">Kritik eşik aşıldı</div><div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div></div>
+        <div class="stat-c cg"><div class="stat-lbl">Tamamlanan Rapor</div><div class="stat-val">12</div><div class="stat-sub">Bu hafta toplam</div><div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+      </div>
+      <div class="alert-band a2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div class="alert-band-txt"><strong>Yüksek Risk Uyarısı:</strong> ACB-2024-00847 numaralı vakada kritik bulgular tespit edildi.</div>
+        <div class="alert-band-link" onclick="openCase('ACB-2024-00847')">Vakayı Görüntüle →</div>
+      </div>
+      <div class="card a3">
+        <div class="card-hd">
+          <div class="card-title">Aktif Vakalar</div>
+          <button class="btn-ghost" onclick="openNewCase()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><path d="M12 5v14M5 12h14"/></svg>Yeni Vaka</button>
+        </div>
+        <table class="dt">
+          <thead><tr><th>Hasta Kodu</th><th>Yaş / Cins.</th><th>Başvuru Şikayeti</th><th>Risk</th><th>Son Analiz</th><th>İşlem</th></tr></thead>
+          <tbody id="cases-tbody">
+            <tr style="background:rgba(201,53,53,.025)">
+              <td><span class="pt-code">ACB-2024-00847</span></td><td>58 / E</td><td style="color:var(--text2)">Nefes darlığı, göğüs ağrısı, ödem</td>
+              <td><span class="rb hi">Yüksek Risk</span></td><td><span class="date">07.03.2026 09:31</span></td>
+              <td><button class="tbl-btn pri" onclick="openCase('ACB-2024-00847')">Analizi Gör</button></td>
+            </tr>
+            <tr>
+              <td><span class="pt-code">ACB-2024-00831</span></td><td>44 / K</td><td style="color:var(--text2)">Yorgunluk, çarpıntı, baş dönmesi</td>
+              <td><span class="rb md">Orta Risk</span></td><td><span class="date">07.03.2026 08:14</span></td>
+              <td><button class="tbl-btn" onclick="openCase('ACB-2024-00831')">Analizi Gör</button></td>
+            </tr>
+            <tr>
+              <td><span class="pt-code">ACB-2024-00819</span></td><td>67 / E</td><td style="color:var(--text2)">Kronik öksürük, kilo kaybı</td>
+              <td><span class="rb md">Orta Risk</span></td><td><span class="date">06.03.2026 17:50</span></td>
+              <td><button class="tbl-btn" onclick="openCase('ACB-2024-00819')">Analizi Gör</button></td>
+            </tr>
+            <tr>
+              <td><span class="pt-code">ACB-2024-00805</span></td><td>35 / K</td><td style="color:var(--text2)">Karın ağrısı, bulantı</td>
+              <td><span class="rb pn">Analiz Bekliyor</span></td><td><span class="date">—</span></td>
+              <td><button class="tbl-btn" onclick="openCase('ACB-2024-00805')">Analiz Başlat</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <button class="fab" onclick="openNewCase()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Yeni Vaka Aç</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     S3 · VAKA FORMU
+═══════════════════════════════════════════════ -->
+<div id="s-case-form" class="screen app">
+  <aside class="sidebar">
+    <div class="sb-brand"><div class="sb-logo"><div class="sb-logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div><div class="sb-name">Verity</div><div class="sb-sub">AI-Assisted CDS</div></div></div></div>
+    <nav class="sb-nav">
+      <div class="sb-section">Ana Menü</div>
+      <div class="nav-i" onclick="goTo('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Genel Bakış</div>
+      <div class="nav-i on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Yeni Vaka</div>
+      <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Aktif Vakalar</div>
+      <div class="sb-section">Çıktılar</div>
+      <div class="nav-i inactive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Raporlar<span class="nav-upcoming">Yakında</span></div>
+      <div class="nav-i inactive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>Ayarlar<span class="nav-upcoming">Yakında</span></div>
+    </nav>
+    <div class="sb-foot"><div class="sb-doc"><div class="sb-av">AK</div><div><div class="sb-doc-name">Dr. A. Kaya</div><div class="sb-doc-role">İç Hastalıkları</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="bc"><span class="lnk" onclick="goTo('dashboard')">Verity</span><span class="sep">›</span><span class="lnk" onclick="goTo('dashboard')">Aktif Vakalar</span><span class="sep">›</span><span class="cur" id="form-bc-code">ACB-2024-00847</span></div>
+      <div class="tb-right"><span class="proto-pill-sm">⚙ Prototip Demo Modu</span><span class="tb-clock" id="clk2">09:47</span></div>
+    </div>
+    <div class="page" style="padding-bottom:0">
+      <div class="ph a0">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div class="ph-title">Yeni Vaka &nbsp;<span id="form-title-code" style="color:var(--teal);font-family:var(--f-mono);font-size:18px;font-weight:600">ACB-2024-00847</span></div><div class="ph-sub">Yapılandırılmış klinik veri girişi &amp; anamnez</div></div>
+          <div style="text-align:right"><div class="prog-lbl" style="margin-bottom:4px">Tamamlanma: <strong style="color:var(--teal)">%87</strong></div><div class="prog-bar" style="width:200px"><div class="prog-fill" style="width:87%"></div></div></div>
+        </div>
+      </div>
+      <div class="cf-grid a1">
+        <!-- LEFT: structured -->
+        <div>
+          <div class="card">
+            <div class="card-bd" id="form-left-body">
+              <!-- populated by renderForm() -->
+            </div>
+          </div>
+        </div>
+        <!-- RIGHT: free text -->
+        <div>
+          <div class="card" style="height:100%">
+            <div class="card-hd">
+              <div class="card-title">Anamnez &amp; Başvuru Şikayeti</div>
+              <!-- Passive button with lock icon -->
+              <button class="btn-passive" title="Prototipte aktif değil">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                Sesli Dikte
+              </button>
+            </div>
+            <div class="card-bd" style="display:flex;flex-direction:column;gap:11px" id="form-right-body">
+              <!-- populated by renderForm() -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-foot">
+      <div class="ff-l" id="form-ff-l">
+        <!-- populated by renderForm() -->
+      </div>
+      <div class="ff-r">
+        <button class="btn-sec" onclick="goTo('dashboard')">Taslak Kaydet</button>
+        <button class="btn-pri" onclick="startAnalysis()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Yapay Zeka Analizini Başlat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     S4 · ANALİZ SONUÇLARI
+═══════════════════════════════════════════════ -->
+<div id="s-results" class="screen app">
+  <aside class="sidebar">
+    <div class="sb-brand"><div class="sb-logo"><div class="sb-logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div><div class="sb-name">Verity</div><div class="sb-sub">AI-Assisted CDS</div></div></div></div>
+    <nav class="sb-nav">
+      <div class="sb-section">Ana Menü</div>
+      <div class="nav-i" onclick="goTo('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Genel Bakış</div>
+      <div class="nav-i" onclick="goTo('case-form')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Yeni Vaka</div>
+      <div class="nav-i on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Aktif Vakalar</div>
+      <div class="sb-section">Çıktılar</div>
+      <div class="nav-i inactive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Raporlar<span class="nav-upcoming">Yakında</span></div>
+      <div class="nav-i inactive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>Ayarlar<span class="nav-upcoming">Yakında</span></div>
+    </nav>
+    <div class="sb-foot"><div class="sb-doc"><div class="sb-av">AK</div><div><div class="sb-doc-name">Dr. A. Kaya</div><div class="sb-doc-role">İç Hastalıkları</div></div></div></div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="bc"><span class="lnk" onclick="goTo('dashboard')">Verity</span><span class="sep">›</span><span class="lnk" onclick="goTo('case-form')"><span id="res-bc-code">ACB-2024-00847</span></span><span class="sep">›</span><span class="cur">Analiz Sonuçları</span></div>
+      <div class="tb-right">
+        <span class="proto-pill-sm">⚙ Prototip Demo Modu</span>
+        <!-- Passive rapor butonu -->
+        <button class="btn-passive" title="Prototipte aktif değil">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          Rapor Oluştur
+        </button>
+        <span class="tb-clock" id="clk3">09:47</span>
+      </div>
+    </div>
+    <div class="page">
+      <div class="res-layout">
+
+        <!-- ── LEFT ── -->
+        <div class="res-left" id="res-left">
+          <!-- populated by renderResults() -->
+        </div><!-- /res-left -->
+
+
+        <!-- ── RIGHT — AI ASİSTAN ── -->
+        <div class="res-right a0">
+          <div class="ast-panel">
+            <div class="ast-hd">
+              <div class="ast-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 010 2h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 010-2h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/><circle cx="9" cy="13" r="1" fill="currentColor"/><circle cx="15" cy="13" r="1" fill="currentColor"/></svg></div>
+              <div><div class="ast-name">Yapay Zeka Asistanı</div><div class="ast-status"><div class="st-dot"></div>Simüle · Demo Modu</div></div>
+            </div>
+            <div class="ast-msgs" id="chat-msgs">
+              <!-- populated by renderResults() -->
+            </div>
+            <div class="typing" id="typing-ind">
+              <div class="ty-dot"></div><div class="ty-dot"></div><div class="ty-dot"></div>
+              <span class="ty-lbl">Yanıt oluşturuluyor...</span>
+            </div>
+            <div class="ast-sugg" id="sugg-area">
+              <div class="sugg-lbl">Önerilen Sorular</div>
+              <div class="sugg-btns" id="sugg-btns">
+                <!-- populated by renderResults() -->
+              </div>
+            </div>
+            <div class="ast-inp">
+              <input class="chat-in" id="chat-in" placeholder="Sorunuzu yazın..." onkeydown="if(event.key==='Enter')sendFree()">
+              <button class="chat-send" onclick="sendFree()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /res-layout -->
+    </div>
+  </div>
+</div>
+
+<!-- LOADING MODAL -->
+<div class="modal-bg" id="ld-modal">
+  <div class="ld-modal">
+    <div class="ld-spin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+    <div class="ld-title">Analiz Çalıştırılıyor</div>
+    <div class="ld-step" id="ld-step">Klinik veriler işleniyor...</div>
+    <div class="ld-prog"><div class="ld-fill" id="ld-fill"></div></div>
+    <div class="ld-dots"><div class="ld-dot on" id="d0"></div><div class="ld-dot" id="d1"></div><div class="ld-dot" id="d2"></div><div class="ld-dot" id="d3"></div></div>
+  </div>
+</div>
+
+<script>
+const CASES = {
+
+  'ACB-2024-00847': {
+    code:'ACB-2024-00847', age:58, sex:'E', bmi:30.4, height:174, weight:92,
+    complaint:'Nefes darlığı, göğüs ağrısı, ödem',
+    riskLabelShort:'Yüksek Risk', riskClass:'hi',
+    status:'analyzed', lastAnalysis:'07.03.2026 09:31',
+    vitals:{bpSys:158,bpDia:96,hr:94,spo2:93,temp:37.8,duration:'3–7 gün (Subakut)'},
+    vitalsFlags:{bpSys:'warn',bpDia:'warn',spo2:'danger'},
+    vitalsWarnings:{bpSys:'⚠ Yüksek eşik', spo2:'⚠ Normal altında'},
+    conditions:['Tip 2 DM','Hipertansiyon'],
+    meds:['Metformin 1000 mg — Günde 2×','Amlodipin 5 mg — Günde 1×'],
+    familyHistory:'Baba: Miyokard enfarktüsü — 62 yaşında',
+    familyChips:['Kardiyovasküler Hastalık'],
+    anamnesis:`Hasta 3 gündür devam eden ve giderek artan nefes darlığı, eforla belirginleşen göğüs ağrısı ve yatarken artan öksürük yakınmalarıyla başvurdu.\n\nİki gece önce yastıklarını artırmak zorunda kaldığını ifade etti (ortopne). Son bir haftada yaklaşık 2 kg kilo artışı mevcut. Muayenede alt ekstremitelerde bilateral pretibial ödem saptandı.\n\nBilinen Tip 2 DM ve hipertansiyon öyküsü var. Babasının 62 yaşında geçirdiği miyokard enfarktüsü nedeniyle kardiyovasküler açıdan ailevi risk mevcut. Mevcut ilaçlarına son günlerde ara verdiği öğrenildi.`,
+    wordCount:'118 kelime · 641 karakter',
+    completion:87,
+    labsNote:'BNP değeri eksik',
+    labs:{hgb:'—',crp:'—',bnp:{val:'Eksik',cls:'warn'}},
+    footerWarnHtml:`<div style="font-size:12px;color:var(--red);font-weight:600;display:flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>SpO2 %93 — Normal aralığın altında</div>`,
+    // Results
+    overallScore:84, overallLabel:'Yüksek Risk', overallLvlClass:'hi',
+    overallSummary:'Mevcut klinik bulgular, anamnez ve longitudinal hasta verisi birlikte değerlendirilerek kardiyovasküler ağırlıklı yüksek risk saptanmıştır.',
+    metaLongitudinal:'5 yıllık longitudinal veri', metaSystems:'3 sistem değerlendirmesi',
+    alerts:[
+      {cls:'crit',bold:'SpO2 %93',text:'— Oksijen satürasyonu düşük; hipoksi kriterleri için klinik değerlendirme önerilir.'},
+      {cls:'crit',bold:'Ortopne + Bilateral Pretibial Ödem',text:'— Bu ikili bulgu kombinasyonu dekompanse kalp yetmezliği ile uyumlu olabilir.'},
+      {cls:'warn',bold:'TA 158/96 + DM + KAH Aile Öyküsü',text:'— Kümülatif kardiyovasküler risk yükü yüksek.'}
+    ],
+    factorsTitle:'Akut Kalp Yetmezliği · Katkı Faktörleri',
+    factors:[
+      {name:'Ortopne öyküsü',pct:'%31',bar:93,cls:'str',desc:'Yatarken gelişen solunum güçlüğü, akciğerlerde sıvı birikiminin klasik belirtisidir ve sol kalp yetmezliği için major Framingham kriteridir.'},
+      {name:'Bilateral pretibial ödem',pct:'%24',bar:72,cls:'mod',desc:'Bilateral alt ekstremite ödemi volüm yüklenmesini destekler; sağ kalp yetmezliği için minor Framingham kriteridir.'},
+      {name:'SpO2 < %95',pct:'%18',bar:54,cls:'str',desc:'İstirahatte hipoksi, pulmoner konjesyon veya plevral efüzyon ile uyumludur; acil değerlendirme endikasyonunu güçlendirir.'},
+      {name:'Eforla artan dispne',pct:'%14',bar:42,cls:'std',desc:'Kardiyak rezervin azaldığına işaret eder. NYHA fonksiyonel sınıflaması için değerlendirme düşünülebilir.'},
+      {name:'Yaş 58 + Tip 2 DM + Hipertansiyon',pct:'%13',bar:39,cls:'std',desc:'Diyabetik kardiyomiyopati ve hipertansif kalp hastalığı kalp yetmezliğinin sık altta yatan nedenleri arasındadır.'}
+    ],
+    missing:[
+      {dot:'crit',name:'BNP / NT-proBNP değeri',desc:'Kalp yetmezliği değerlendirmesinde yüksek özgüllüğe sahip bir biyobelirteç. Mevcut olmadığında risk skoru daha geniş bir aralıkta kalabilmektedir.',note:'Klinik değerlendirmeye eklenebilir.'},
+      {dot:'crit',name:'Ejeksiyon Fraksiyonu (EF)',desc:'HFrEF ile HFpEF ayrımı için önemli bir parametre. Mevcut EKO verisi yoksa bu ayrım yapılamayabilir.',note:'Klinik tabloyu tamamlamak açısından değerlendirmeye eklenebilir.'},
+      {dot:'rec',name:'Önceki EKG kaydı',desc:'Mevcut ritim bulgularının geçmiş kayıtla karşılaştırılması akut değişimi ortaya koyabilir.',note:'Klinik değerlendirmeyi güçlendirebilir.'},
+      {dot:'rec',name:'Böbrek fonksiyon testleri (Kreatinin, GFR)',desc:'Kardiyorenal sendromu ekarte etmek açısından göz önünde bulundurulabilir.',note:'Klinik değerlendirmeyi güçlendirebilir.'},
+      {dot:'opt',name:'Tiroid fonksiyon testleri',desc:'Hipertiroidizm kalp yetmezliğini taklit edebilir; ayırıcı tanı kapsamında değerlendirmeye eklenebilir.',note:null}
+    ],
+    trajectory:{hasHistory:true,verdict:'Kötüleşme Eğilimi — Yakın İzlem Gerektirebilir',sub:'Son 5 yıllık klinik veri örüntüsüne dayalı değerlendirme',badge:'Artan Risk Yükü',
+      years:[{y:'2020',dot:'lo',con:'lo',lbl:'Düşük',c:'var(--green)'},{y:'2021',dot:'lo',con:'lo',lbl:'Düşük',c:'var(--green)'},{y:'2022',dot:'md',con:'md',lbl:'Orta',c:'var(--amber)'},{y:'2023',dot:'md',con:'md',lbl:'Orta',c:'var(--amber)'},{y:'2024',dot:'hi',con:'hi',lbl:'Yüksek',c:'var(--red)'},{y:'2026',dot:'cur',con:null,lbl:'Şimdiki',c:null,cur:true}],
+      chips:[{cls:'neg',label:'Son 3 yılda artan risk yükü'},{cls:'warn',label:'İlaç uyumu zayıflamış'},{cls:'warn',label:'KB kontrolü yetersiz'},{cls:'info',label:'VKİ yükselme eğilimi'}],
+      note:'Bu öngörü, 10 yıla kadar uzanan longitudinal klinik veri örüntülerine dayalı istatistiksel bir değerlendirmedir. Deterministik bir tahmin değildir; bireysel klinik faktörler ve hekim değerlendirmesi her zaman önceliklidir.'
+    },
+    breakdown:{systems:[
+      {cat:'hi',label:'Kardiyovasküler',name:'Kardiyovasküler Değerlendirme',lvl:'Yüksek Risk',lvlCls:'hi',score:84,diseases:[{name:'Akut Kalp Yetmezliği',cls:'hi',lbl:'Yüksek',s:84},{name:'Akut Koroner Sendrom',cls:'lo',lbl:'Düşük',s:28}]},
+      {cat:'md',label:'Solunumsal',name:'Solunumsal Değerlendirme',lvl:'Orta Risk',lvlCls:'md',score:44,diseases:[{name:'KOAH Alevlenmesi',cls:'md',lbl:'Orta',s:41},{name:'Pulmoner Emboli',cls:'lo',lbl:'Düşük',s:33}]},
+      {cat:'md',label:'Metabolik',name:'Metabolik Değerlendirme',lvl:'Orta Risk',lvlCls:'md',score:38,diseases:[{name:'DM Komplikasyonu',cls:'md',lbl:'Orta',s:38},{name:'Hipertansif Kriz',cls:'lo',lbl:'Düşük',s:24}]}
+    ]},
+    aiGreeting:'Merhaba Dr. Kaya. <strong>ACB-2024-00847</strong> vakasının analizi tamamlandı. Genel risk skoru <strong>84/100 — Yüksek Risk</strong>. Kardiyovasküler sistem ağırlıklı olmak üzere 3 sistem değerlendirmesi yapıldı. Sorularınızı yanıtlamaya hazırım.',
+    aiSuggestions:['Framingham kriterlerini bu vakaya uygular mısın?','Klinik seyir öngörüsünü açıklar mısın?','Pulmoner emboli olasılığını değerlendir','Risk faktörlerini özetle'],
+    aiResponses:{
+      'Framingham kriterlerini bu vakaya uygular mısın?':'<strong>Öne çıkan bulgular:</strong><br>Major: Ortopne, akut pulmoner ödem şüphesi (SpO2 %93, dispne)<br>Minor: Bilateral pretibial ödem, takipardi (nabız 94)<br><br><strong>Ayırıcı tanı notu:</strong> Kriter sayısı güçlü bir kalp yetmezliği şüphesini desteklemektedir; ancak KOAH veya emboli henüz dışlanmamıştır.<br><br><strong>Eksik bilgi:</strong> BNP değeri değerlendirmeyi netleştirecektir.<br><br><strong>Sonuç:</strong> Bu vakada Framingham kriterlerine göre klinik şüphe yüksektir.',
+      'Klinik seyir öngörüsünü açıklar mısın?':'<strong>Gözlemlenen eğilimler:</strong><br>• 2022\'den itibaren kan basıncı kontrolünde bozulma<br>• İlaç uyumunda zayıflama örüntüsü<br>• VKİ\'de kademeli artış eğilimi<br><br><strong>Öngörü:</strong> Mevcut örüntü devam ederse risk yükünün artmaya devam edebileceği değerlendirilmektedir.<br><br><strong>Not:</strong> Bu deterministik bir tahmin değil; istatistiksel bir örüntü değerlendirmesidir.',
+      'Pulmoner emboli olasılığını değerlendir':'<strong>Öne çıkan bulgular:</strong> Dispne + taşikardi mevcut; DVT bulgusu bildirilmemiş.<br><br><strong>Ayırıcı tanı notu:</strong> Wells skoru düşük-orta aralığında görünmektedir. Bilateral ödem + ortopne kombinasyonu kardiyojenik nedeni daha güçlü desteklemektedir.<br><br><strong>Eksik bilgi:</strong> D-dimer ve alt ekstremite venöz değerlendirmesi yoksa olasılık tam dışlanamaz.<br><br><strong>Sonuç:</strong> Pulmoner emboli bu vakada düşük olasılıklı ancak dışlanmamıştır.',
+      'Risk faktörlerini özetle':'<strong>Değiştirilebilir:</strong><br>• Hipertansiyon — kontrol altında değil (158/96)<br>• Tip 2 DM — ilaç uyumsuzluğu şüphesi<br>• Obezite (VKİ 30.4)<br><br><strong>Değiştirilemeyen:</strong><br>• Erkek, 58 yaş · KAH aile öyküsü (baba: Mİ, 62 yaşında)<br><br><strong>Mevcut akut bulgular:</strong><br>• SpO2 %93 · Ortopne · Bilateral ödem<br><br><strong>Sonuç:</strong> Risk yükü kümülatif ve yüksek; birden fazla faktör eş zamanlı devrede.'
+    }
+  },
+
+  'ACB-2024-00831': {
+    code:'ACB-2024-00831', age:44, sex:'K', bmi:23.1, height:162, weight:61,
+    complaint:'Yorgunluk, çarpıntı, baş dönmesi',
+    riskLabelShort:'Orta Risk', riskClass:'md',
+    status:'analyzed', lastAnalysis:'07.03.2026 08:14',
+    vitals:{bpSys:128,bpDia:82,hr:108,spo2:97,temp:36.9,duration:'2–4 hafta (Kronik)'},
+    vitalsFlags:{hr:'warn'},
+    vitalsWarnings:{hr:'⚠ Taşikardi sınırında'},
+    conditions:['Hashimoto Tiroiditi'],
+    meds:['Levotiroksin 75 mcg — Günde 1×'],
+    familyHistory:'Anne: Tip 2 DM',
+    familyChips:['DM'],
+    anamnesis:`Hasta 3 haftadır devam eden halsizlik, çarpıntı hissi ve efor kapasitesinde belirgin azalma yakınmalarıyla başvurdu.\n\nÖzellikle sabah saatlerinde baş dönmesi yaşadığını ve ara sıra palpitasyon atakları olduğunu ifade etti. Son 1 ayda yaklaşık 3 kg kilo kaybı mevcut.\n\nHashimoto tiroiditi nedeniyle 2 yıldır levotiroksin kullanmakta. Son tiroid kontrolü 7 ay önce yapılmış. Uyku düzeninde bozulma ve sinirlilik artışı da eşlik ediyor.`,
+    wordCount:'96 kelime · 527 karakter',
+    completion:74,
+    labsNote:'TSH ve serbest T4 eksik',
+    labs:{hgb:'11.4',crp:'4.2',bnp:{val:'—',cls:''}},
+    footerWarnHtml:`<div style="font-size:12px;color:var(--amber);font-weight:600;display:flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>TSH ve serbest T4 değerleri eksik</div>`,
+    overallScore:52, overallLabel:'Orta Risk', overallLvlClass:'md',
+    overallSummary:'Semptom yükü ve tiroid öyküsü göz önüne alındığında orta düzey klinik risk saptanmıştır. Endokrin ve kardiyak bileşen birlikte değerlendirilmelidir.',
+    metaLongitudinal:'2 yıllık takip verisi', metaSystems:'2 sistem değerlendirmesi',
+    alerts:[
+      {cls:'warn',bold:'Taşikardi (nabız 108)',text:'— İstirahat taşikardisi; tiroid disfonksiyonu veya kardiyak neden ayırıcı tanısına alınmalıdır.'},
+      {cls:'warn',bold:'Tiroid kontrolü 7 aydır yapılmamış',text:'— Levotiroksin dozu mevcut tiroid durumunu yansıtmıyor olabilir.'},
+      {cls:'warn',bold:'3 kg kilo kaybı + halsizlik + palpitasyon',text:'— Hipertiroidi klinik tablosu ile uyumlu olabilir; semptom kümesi dikkat gerektirmektedir.'}
+    ],
+    factorsTitle:'Endokrin-Kardiyak Değerlendirme · Katkı Faktörleri',
+    factors:[
+      {name:'Tiroid kontrolü uzun süredir yapılmamış',pct:'%34',bar:85,cls:'mod',desc:'Levotiroksin dozunun suboptimal ya da fazla olması her iki yönde de semptom üretebilir. TSH son 7 aydır ölçülmemiş.'},
+      {name:'İstirahat taşikardisi (108 atım/dk)',pct:'%27',bar:68,cls:'mod',desc:'İstirahat kalp hızı > 100 birden fazla nedeni işaret edebilir. Tiroid kaynaklı ya da primer kardiyak değerlendirme gereklidir.'},
+      {name:'Kilo kaybı + halsizlik (3 kg/1 ay)',pct:'%21',bar:52,cls:'std',desc:'Hızlı kilo kaybı, hipertiroidizmin veya diğer sistemik nedenlerin belirtisi olabilir.'},
+      {name:'Hafif anemi bulgusu (Hgb 11.4)',pct:'%11',bar:28,cls:'std',desc:'Hipotiroidizm ile ilişkili hafif normositik anemi mevcut olabilir; tiroid durumu netleştikçe değişebilir.'},
+      {name:'Uyku bozukluğu + sinirlilik',pct:'%7',bar:18,cls:'std',desc:'Tirotoksikoz ile uyumlu nöropsikiyatrik belirtiler mevcut. Birincil tanı desteklemektedir.'}
+    ],
+    missing:[
+      {dot:'crit',name:'TSH ve Serbest T4',desc:'Tiroid aks değerlendirmesi yapılmadan endokrin bileşen yorumlanamaz. Bu vaka için birincil eksik parametre.',note:'Klinik değerlendirmeye eklenebilir.'},
+      {dot:'crit',name:'EKG',desc:'Taşikardinin karakterizasyonu ve ritim değerlendirmesi için gereklidir. Atriyal fibrilasyon dışlanmalıdır.',note:'Klinik değerlendirmeyi tamamlar.'},
+      {dot:'rec',name:'Tam kan sayımı detayı (MCV, demir)',desc:'Aneminin tipini belirlemeye yardımcı olacaktır.',note:'Klinik değerlendirmeyi güçlendirebilir.'},
+      {dot:'opt',name:'Ekokardiyografi',desc:'Tiroid kaynaklı kardiyak yük artışı varsa ek görüntüleme değerlendirmeye alınabilir.',note:null}
+    ],
+    trajectory:{hasHistory:true,verdict:'Değişken Seyir — Tiroid Tedavisine Bağımlı',sub:'2 yıllık takip verisine dayalı değerlendirme',badge:'İzlem Önerilir',
+      years:[{y:'2022',dot:'lo',con:'lo',lbl:'Düşük',c:'var(--green)'},{y:'2023',dot:'lo',con:'lo',lbl:'Düşük',c:'var(--green)'},{y:'2024',dot:'md',con:'md',lbl:'Orta',c:'var(--amber)'},{y:'2025',dot:'md',con:'md',lbl:'Orta',c:'var(--amber)'},{y:'2026',dot:'cur',con:null,lbl:'Şimdiki',c:null,cur:true}],
+      chips:[{cls:'warn',label:'Tiroid kontrolü ihmal edilmiş'},{cls:'warn',label:'Semptom yükü artmış'},{cls:'info',label:'İlaç dozajı gözden geçirilmeli'}],
+      note:'Bu öngörü, mevcut endokrin takip verilerine dayalıdır. Tiroid tedavisinin optimize edilmesiyle klinik tablonun önemli ölçüde değişebileceği göz önünde bulundurulmalıdır.'
+    },
+    breakdown:{systems:[
+      {cat:'hi',label:'Endokrin',name:'Endokrin Değerlendirme',lvl:'Yüksek Risk',lvlCls:'hi',score:61,diseases:[{name:'Tiroid Disfonksiyonu',cls:'hi',lbl:'Yüksek',s:61},{name:'DM Predispozisyon',cls:'lo',lbl:'Düşük',s:18}]},
+      {cat:'md',label:'Kardiyak',name:'Kardiyak Değerlendirme',lvl:'Orta Risk',lvlCls:'md',score:52,diseases:[{name:'Sinüs Taşikardisi',cls:'md',lbl:'Orta',s:52},{name:'Atriyal Fibrilasyon',cls:'lo',lbl:'Düşük',s:21}]}
+    ]},
+    aiGreeting:'Merhaba Dr. Kaya. <strong>ACB-2024-00831</strong> vakasının analizi tamamlandı. Genel risk skoru <strong>52/100 — Orta Risk</strong>. Endokrin ve kardiyak bileşen birlikte değerlendirme gerektirmektedir. Sorularınızı yanıtlamaya hazırım.',
+    aiSuggestions:['TSH yokluğunda tiroid riskini nasıl yorumlamalıyız?','Taşikardinin olası nedenlerini sıralar mısın?','Kilo kaybını klinik tabloya bağlar mısın?','Risk faktörlerini özetle'],
+    aiResponses:{
+      'TSH yokluğunda tiroid riskini nasıl yorumlamalıyız?':'<strong>Öne çıkan bulgular:</strong><br>Palpitasyon, taşikardi, kilo kaybı, sinirlilik — hipertiroidizm semptom kümesiyle örtüşmektedir.<br><br><strong>Ayırıcı tanı notu:</strong> TSH olmadan kesin yorum yapılamaz. Ancak semptomlar subklinik hipertiroidizm ya da aşırı levotiroksin dozu ile uyumludur.<br><br><strong>Eksik bilgi:</strong> TSH + serbest T4 bu vakada birincil öncelikli laboratuvar parametresidir.<br><br><strong>Sonuç:</strong> Tiroid aksı netleştirilmeden risk değerlendirmesi tamamlanamaz.',
+      'Taşikardinin olası nedenlerini sıralar mısın?':'<strong>Öne çıkan bulgular:</strong><br>İstirahat nabzı 108; EKG yok, ritim bilinmiyor.<br><br><strong>Olası nedenler:</strong><br>• Tirotoksikoz (kilo kaybı + palpitasyon ile uyumlu)<br>• Anemi (Hgb 11.4)<br>• Anksiyete / stres kaynaklı<br>• Primer kardiyak (dışlanmamış)<br><br><strong>Sonuç:</strong> EKG ve TSH birlikte bakılmadan sıralama yapılamaz.',
+      'Kilo kaybını klinik tabloya bağlar mısın?':'<strong>Öne çıkan bulgular:</strong><br>1 ayda 3 kg kayıp; iştah durumu belirtilmemiş.<br><br><strong>Ayırıcı tanı notu:</strong> Hipertiroidizm en güçlü aday. Malignite, depresyon veya kronik enfeksiyon daha az olası ancak dışlanmamış.<br><br><strong>Eksik bilgi:</strong> İştah bilgisi ve dışkı alışkanlığı değişikliği anamnezi tamamlanmalıdır.<br><br><strong>Sonuç:</strong> Kilo kaybı bu vakada diagnostik önem taşımaktadır.',
+      'Risk faktörlerini özetle':'<strong>Değiştirilebilir:</strong><br>• Tiroid takibi ihmal edilmiş (7 ay)<br>• İlaç dozu gözden geçirilmemiş<br><br><strong>Değiştirilemeyen:</strong><br>• Kadın cinsiyet · Otoimmün tiroid hastalığı öyküsü<br><br><strong>Mevcut bulgular:</strong><br>• Taşikardi · Kilo kaybı · Halsizlik<br><br><strong>Sonuç:</strong> Büyük ölçüde yönetilebilir risk faktörleri mevcut; TSH sonrası tablo netleşecektir.'
+    }
+  },
+
+  'ACB-2024-00819': {
+    code:'ACB-2024-00819', age:67, sex:'E', bmi:21.8, height:170, weight:63,
+    complaint:'Kronik öksürük, kilo kaybı',
+    riskLabelShort:'Orta Risk', riskClass:'md',
+    status:'analyzed', lastAnalysis:'06.03.2026 17:50',
+    vitals:{bpSys:132,bpDia:78,hr:86,spo2:91,temp:37.2,duration:'> 8 hafta (Kronik)'},
+    vitalsFlags:{spo2:'danger'},
+    vitalsWarnings:{spo2:'⚠ Kritik eşik altında'},
+    conditions:['KOAH','Tip 2 DM'],
+    meds:['Tiotropyum 18 mcg — Günde 1×','Salbutamol inhaler — Gerektiğinde'],
+    familyHistory:'Bilinmiyor',
+    familyChips:[],
+    anamnesis:`Hasta 8 haftadır devam eden, giderek kötüleşen kuru öksürük ve son 2 ayda yaklaşık 5 kg kilo kaybı şikayetiyle başvurdu.\n\nSabah saatlerinde balgam çıkarmakta güçlük yaşadığını ve efor kapasitesinin belirgin biçimde azaldığını ifade etti. Gece terlemeleri de mevcut.\n\nBilinen KOAH ve Tip 2 DM öyküsü var. 45 paket-yıl sigara öyküsü; 4 yıl önce bırakmış. Son KOAH kontrolü 6 ay önce yapılmış. Aile öyküsünde malignite sorgulanmamış.`,
+    wordCount:'104 kelime · 558 karakter',
+    completion:80,
+    labsNote:'Balgam kültürü ve görüntüleme eksik',
+    labs:{hgb:'11.8',crp:'18.4',bnp:{val:'—',cls:''}},
+    footerWarnHtml:`<div style="font-size:12px;color:var(--red);font-weight:600;display:flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>SpO2 %91 — Kritik değerlendirme gerektirir</div>`,
+    overallScore:48, overallLabel:'Orta Risk', overallLvlClass:'md',
+    overallSummary:'Kronik semptom örüntüsü, SpO2 düzeyi ve sigara öyküsü birleşimi orta-yüksek pulmoner risk oluşturmaktadır. Onkolojik tarama bileşeni göz ardı edilmemelidir.',
+    metaLongitudinal:'KOAH takip verileri', metaSystems:'2 sistem değerlendirmesi',
+    alerts:[
+      {cls:'crit',bold:'SpO2 %91',text:'— Kritik hipoksi eşiği; akut alevlenme veya efüzyon değerlendirmesi gerekebilir.'},
+      {cls:'warn',bold:'8 haftalık kronik öksürük + 5 kg kilo kaybı',text:'— Bu ikili bulgu onkolojik tarama endikasyonu açısından değerlendirilmelidir.'},
+      {cls:'warn',bold:'45 paket-yıl sigara öyküsü',text:'— Uzun süreli sigara maruziyeti; KOAH alevlenmesi ve malignite riskini eş zamanlı artırmaktadır.'}
+    ],
+    factorsTitle:'Pulmoner Değerlendirme · Katkı Faktörleri',
+    factors:[
+      {name:'Uzun süreli sigara öyküsü (45 pk-yıl)',pct:'%32',bar:80,cls:'str',desc:'45 paket-yıl maruziyeti hem KOAH progresyonu hem de pulmoner malignite için önemli bir risk faktörüdür.'},
+      {name:'SpO2 %91 — istirahat hipoksisi',pct:'%26',bar:65,cls:'str',desc:'İstirahat SpO2 değerinin bu düzeye düşmesi klinik tablonun ciddiyetine işaret etmektedir.'},
+      {name:'Kronik öksürük > 8 hafta',pct:'%20',bar:50,cls:'mod',desc:'8 haftayı aşan öksürük kronik bronşit, malignite veya kronik enfeksiyonun araştırılması için eşik oluşturmaktadır.'},
+      {name:'5 kg kilo kaybı / 2 ay',pct:'%14',bar:35,cls:'mod',desc:'İstem dışı kilo kaybı sistemik patoloji için önemli bir uyarı belirtisidir.'},
+      {name:'CRP 18.4 mg/L — yüksek',pct:'%8',bar:20,cls:'std',desc:'Aktif inflamasyon mevcut; enfeksiyöz veya onkolojik kaynaklı olabilir.'}
+    ],
+    missing:[
+      {dot:'crit',name:'Toraks BT',desc:'Pulmoner kitleyi veya KOAH progresyonunu ayırt etmek için öncelikli görüntüleme yöntemi.',note:'Klinik değerlendirmeye eklenmesi önemlidir.'},
+      {dot:'crit',name:'Balgam kültürü ve sitoloji',desc:'Enfeksiyöz ve neoplastik bileşeni ayırt etmek için değerlendirilmesi gereken parametre.',note:'Klinik tabloya eklenebilir.'},
+      {dot:'rec',name:'Solunum fonksiyon testleri (SFT)',desc:'KOAH\'ın mevcut şiddetini nesnel olarak değerlendirmek için kullanılabilir.',note:'Klinik değerlendirmeyi güçlendirebilir.'},
+      {dot:'rec',name:'LDH ve fibrinojen',desc:'Malignite belirteçleri ve inflamasyon derinliği için göz önünde bulundurulabilir.',note:'Klinik değerlendirmeyi güçlendirebilir.'},
+      {dot:'opt',name:'PET-BT',desc:'BT bulguları şüphe uyandırırsa ileri evreleme için değerlendirmeye alınabilir.',note:null}
+    ],
+    trajectory:{hasHistory:true,verdict:'Kademeli Kötüleşme Eğilimi — Aktif Takip Önerilir',sub:'KOAH takip verileri ve sigara öyküsüne dayalı değerlendirme',badge:'Pulmoner Risk Artışı',
+      years:[{y:'2020',dot:'lo',con:'lo',lbl:'Düşük',c:'var(--green)'},{y:'2021',dot:'lo',con:'lo',lbl:'Düşük',c:'var(--green)'},{y:'2022',dot:'lo',con:'md',lbl:'Düşük',c:'var(--green)'},{y:'2023',dot:'md',con:'md',lbl:'Orta',c:'var(--amber)'},{y:'2025',dot:'md',con:'hi',lbl:'Orta',c:'var(--amber)'},{y:'2026',dot:'cur',con:null,lbl:'Şimdiki',c:null,cur:true}],
+      chips:[{cls:'neg',label:'Akut semptom artışı'},{cls:'warn',label:'KOAH kontrolü 6 aydır yapılmamış'},{cls:'warn',label:'SpO2 kademeli düşüş'},{cls:'info',label:'Sigara bırakma: 4 yıl önce'}],
+      note:'Bu öngörü KOAH takip verileri ve mevcut klinik bulgulara dayalıdır. Onkolojik değerlendirme sonuçları klinik seyri önemli ölçüde yeniden şekillendirebilir.'
+    },
+    breakdown:{systems:[
+      {cat:'hi',label:'Solunumsal',name:'Solunumsal Değerlendirme',lvl:'Yüksek Risk',lvlCls:'hi',score:68,diseases:[{name:'KOAH Alevlenmesi',cls:'hi',lbl:'Yüksek',s:68},{name:'Pnömoni',cls:'md',lbl:'Orta',s:38}]},
+      {cat:'md',label:'Onkolojik Tarama',name:'Onkolojik Tarama',lvl:'Orta Risk',lvlCls:'md',score:55,diseases:[{name:'Pulmoner Malignite Şüphesi',cls:'md',lbl:'Orta',s:55},{name:'Lenfoma',cls:'lo',lbl:'Düşük',s:14}]}
+    ]},
+    aiGreeting:'Merhaba Dr. Kaya. <strong>ACB-2024-00819</strong> vakasının analizi tamamlandı. Genel risk skoru <strong>48/100 — Orta Risk</strong>. Pulmoner sistem öncelikli olmak üzere onkolojik tarama bileşeni değerlendirmeye alınmıştır. Sorularınızı yanıtlamaya hazırım.',
+    aiSuggestions:['Öksürük + kilo kaybı kombinasyonunu yorumlar mısın?','KOAH alevlenmesi ile maligniteyi ayırt etmek için ne bakmalıyız?','SpO2 %91 bu vakada ne anlama geliyor?','Risk faktörlerini özetle'],
+    aiResponses:{
+      'Öksürük + kilo kaybı kombinasyonunu yorumlar mısın?':'<strong>Öne çıkan bulgular:</strong><br>8 haftalık öksürük + 5 kg kilo kaybı + 45 paket-yıl sigara — bu üçlü kombinasyon pulmoner onkolojik tarama için yeterli klinik şüphe zemini oluşturmaktadır.<br><br><strong>Ayırıcı tanı notu:</strong> KOAH alevlenmesi, tüberküloz ve malignite ayırıcı tanıda tutulmalıdır.<br><br><strong>Eksik bilgi:</strong> Toraks BT olmadan bu ayrım yapılamaz.<br><br><strong>Sonuç:</strong> Görüntüleme önceliklendirilmesi önerilir.',
+      'KOAH alevlenmesi ile maligniteyi ayırt etmek için ne bakmalıyız?':'<strong>Öne çıkan bulgular:</strong><br>CRP 18.4 aktif inflamasyon; balgam sitolojisi yok.<br><br><strong>Ayırt edici kriterler:</strong><br>• Ateş + pürülan balgam → alevlenme lehine<br>• Gece terlemesi + kilo kaybı → malignite veya TB lehine<br>• Her ikisi de BT ve sitoloji gerektirir<br><br><strong>Sonuç:</strong> Bu vakada klinik bulgu kümesi görüntülemeyi zorunlu kılmaktadır.',
+      'SpO2 %91 bu vakada ne anlama geliyor?':'<strong>Öne çıkan bulgular:</strong><br>SpO2 %91 istirahat değeri; KOAH zemininde ciddi.<br><br><strong>Klinik anlam:</strong><br>• < %92 uzun süreli oksijen tedavisinin değerlendirileceği eşik<br>• Akut bileşen varsa (enfeksiyon, efüzyon) acil müdahale gerekebilir<br>• Bu değer KOAH kötüleşmesinin veya yeni bir patolojinin işareti olabilir<br><br><strong>Sonuç:</strong> SpO2 trendi ve BT birlikte değerlendirilmelidir.',
+      'Risk faktörlerini özetle':'<strong>Değiştirilebilir:</strong><br>• KOAH takibi 6 aydır yapılmamış<br>• SpO2 giderek düşüyor — aktif tedavi gerekebilir<br><br><strong>Değiştirilemeyen:</strong><br>• Erkek, 67 yaş · 45 paket-yıl sigara (4 yıl önce bırakmış)<br><br><strong>Mevcut akut bulgular:</strong><br>• SpO2 %91 · Kronik öksürük · 5 kg kilo kaybı<br><br><strong>Sonuç:</strong> Risk yükü kombine pulmoner ve sistemik nedenlerden kaynaklanmakta; görüntüleme önceliği yüksektir.'
+    }
+  },
+
+  'ACB-2024-00805': {
+    code:'ACB-2024-00805', age:35, sex:'K', bmi:22.4, height:165, weight:61,
+    complaint:'Karın ağrısı, bulantı',
+    riskLabelShort:'Analiz Bekliyor', riskClass:'pn',
+    status:'pending', lastAnalysis:null,
+    vitals:{bpSys:118,bpDia:74,hr:78,spo2:98,temp:37.0,duration:'1–3 gün (Akut)'},
+    vitalsFlags:{},
+    vitalsWarnings:{},
+    conditions:[],
+    meds:[],
+    familyHistory:'Bilinmiyor',
+    familyChips:[],
+    anamnesis:`Hasta 2 gündür devam eden epigastrik bölgede ağrı ve bulantı şikayetiyle başvurdu.\n\nAğrının özellikle yemek sonrasında arttığını, sırta yayıldığını ifade etti. Ateş yok. Dışkı alışkanlığında değişiklik bildirilmedi.\n\nÖzgeçmişinde bilinen kronik hastalık yok. Herhangi bir ilaç kullanımı yok. Son aylarda stres düzeyinin arttığını belirtti.`,
+    wordCount:'77 kelime · 421 karakter',
+    completion:62,
+    labsNote:'Tüm laboratuvar değerleri eksik',
+    labs:{hgb:{val:'—',cls:''},crp:{val:'—',cls:''},bnp:{val:'—',cls:''}},
+    footerWarnHtml:`<div style="font-size:12px;color:var(--text2);font-weight:500;display:flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Form %62 tamamlandı — analiz başlatmak için eksikleri doldurun</div>`,
+    // No results data — pending; populated after analysis runs
+    overallScore:31, overallLabel:'Düşük-Orta Risk', overallLvlClass:'md',
+    overallSummary:'Mevcut semptomlar ve klinik bulgular ışığında düşük-orta risk saptanmıştır. Laboratuvar verisi eksikliği nedeniyle değerlendirme tamamlanamamıştır; sonuçlar güncellenmeli ve takip planlanmalıdır.',
+    metaLongitudinal:'İlk başvuru verisi', metaSystems:'2 sistem değerlendirmesi',
+    alerts:[
+      {cls:'warn',bold:'Epigastrik ağrı + sırta yayılım',text:'— Pankreas veya peptik ülser patolojisi ayırıcı tanıya alınmalıdır.'},
+      {cls:'warn',bold:'Tüm laboratuvar değerleri eksik',text:'— Amilaz, lipaz, tam kan ve CRP eklenmeden değerlendirme tamamlanamaz.'},
+      {cls:'warn',bold:'Stres öyküsü + semptom artışı',text:'— Fonksiyonel dispepsi veya stres kaynaklı gastrit ile uyumlu olabilir.'}
+    ],
+    factorsTitle:'Gastrointestinal Değerlendirme · Katkı Faktörleri',
+    factors:[
+      {name:'Yemek sonrası artan epigastrik ağrı',pct:'%38',bar:75,cls:'mod',desc:'Postprandiyal ağrı; peptik ülser hastalığı veya fonksiyonel dispepsi ile uyumlu en güçlü bulgudur.'},
+      {name:'Sırta yayılan ağrı',pct:'%27',bar:54,cls:'mod',desc:'Ağrının sırta yayılması pankreatit veya posterior ülser perforasyonu açısından dikkat gerektirmektedir.'},
+      {name:'Bulantı — 2 gündür devam eden',pct:'%20',bar:40,cls:'std',desc:'Bulantının süresi ve yemekle ilişkisi gastrointestinal kaynaklı patolojiyi desteklemektedir.'},
+      {name:'Artan stres düzeyi',pct:'%15',bar:30,cls:'std',desc:'Psikososyal stres, fonksiyonel gastrointestinal hastalıkların tetikleyicisi olabilir.'}
+    ],
+    missing:[
+      {dot:'crit',name:'Amilaz ve Lipaz',desc:'Akut pankreatiti dışlamak için birinci basamak laboratuvar parametresi.',note:'Klinik değerlendirmeye eklenmelidir.'},
+      {dot:'crit',name:'Tam kan sayımı ve CRP',desc:'Enflamasyon ve enfeksiyon bileşenini değerlendirmek için gereklidir.',note:'Klinik değerlendirmeye eklenmelidir.'},
+      {dot:'rec',name:'H. Pylori testi',desc:'Peptik ülser hastalığında etiyolojik araştırma için önerilir.',note:'Klinik değerlendirmeyi güçlendirebilir.'},
+      {dot:'rec',name:'Üst GİS endoskopisi',desc:'Semptomlar devam ederse veya alarm belirtileri ortaya çıkarsa değerlendirmeye alınabilir.',note:'Klinik değerlendirmeyi tamamlayabilir.'},
+      {dot:'opt',name:'Batın ultrasonografisi',desc:'Safra kesesi patolojisini veya hepatik bileşeni dışlamak için kullanılabilir.',note:null}
+    ],
+    trajectory:{hasHistory:false,verdict:'Stabil Görünüm — Laboratuvar Sonrası Yeniden Değerlendirme',sub:'İlk başvuru verilerine dayalı değerlendirme',badge:'Takip Önerilir',
+      years:[{y:'2026',dot:'lo',con:null,lbl:'İlk Başvuru',c:'var(--teal)',cur:true}],
+      chips:[{cls:'info',label:'İlk klinik temas'},{cls:'warn',label:'Laboratuvar verisi eksik'},{cls:'info',label:'Kronik hastalık öyküsü yok'}],
+      note:'Bu vaka için yeterli longitudinal veri bulunmamaktadır. Değerlendirme yalnızca mevcut başvuru bulgularına dayanmaktadır. Laboratuvar sonuçları alındıktan sonra risk tahmini güncellenmelidir.'
+    },
+    breakdown:{systems:[
+      {cat:'md',label:'Gastrointestinal',name:'Gastrointestinal Değerlendirme',lvl:'Orta Risk',lvlCls:'md',score:42,diseases:[{name:'Peptik Ülser / Dispepsi',cls:'md',lbl:'Orta',s:42},{name:'Akut Pankreatit',cls:'lo',lbl:'Düşük',s:19}]},
+      {cat:'lo',label:'Psikosomatik',name:'Psikosomatik Değerlendirme',lvl:'Düşük Risk',lvlCls:'lo',score:22,diseases:[{name:'Fonksiyonel Dispepsi',cls:'lo',lbl:'Düşük',s:22},{name:'Anksiyete İlişkili Semptom',cls:'lo',lbl:'Düşük',s:15}]}
+    ]},
+    aiGreeting:'Merhaba Dr. Kaya. <strong>ACB-2024-00805</strong> vakasının ön analizi tamamlandı. Genel risk skoru <strong>31/100 — Düşük-Orta Risk</strong>. Laboratuvar verilerinin eklenmesi değerlendirmeyi önemli ölçüde güçlendirecektir. Sorularınızı yanıtlamaya hazırım.',
+    aiSuggestions:['Semptomları fonksiyonel mi organik mi olarak değerlendirmeliyiz?','Kilo kaybını klinik tabloya bağlar mısın?','Risk faktörlerini özetle'],
+    aiResponses:{
+
+      'Semptomları fonksiyonel mi organik mi olarak değerlendirmeliyiz?':'<strong>Öne çıkan bulgular:</strong><br>Stres öyküsü + yemekle ilişkili semptom fonksiyoneli destekliyor; sırta yayılım organik patolojiyi işaret ediyor.<br><br><strong>Ayırıcı tanı notu:</strong><br>Alarm belirtileri yoksa (kilo kaybı, disfaji, melena) fonksiyonel dispepsi olası; ancak organik nedenler ekarte edilmeden kesin yorum yapılamaz.<br><br><strong>Sonuç:</strong> Önce organik nedenler dışlanmalıdır.',
+
+      'Risk faktörlerini özetle':'<strong>Değiştirilebilir:</strong><br>• Stres yönetimi<br>• Beslenme alışkanlıkları (postprandiyal semptom)<br><br><strong>Değiştirilemeyen:</strong><br>• Kadın, 35 yaş (düşük kardiyovasküler risk)<br><br><strong>Mevcut bulgular:</strong><br>• Epigastrik ağrı · Sırta yayılım · Bulantı<br><br><strong>Sonuç:</strong> Risk yükü düşük-orta; laboratuvar ile tablo netleşecektir.'
+    }
+  }
+
+}
+
+
+/* ══════════════════════════════════════════════════════
+   NEW CASE — blank state for "Yeni Vaka" flow
+══════════════════════════════════════════════════════ */
+var NEW_CASE = {
+  code:'YENİ VAKA', age:'', sex:'E', bmi:'', height:'', weight:'',
+  complaint:'',
+  riskLabelShort:'', riskClass:'',
+  status:'new', lastAnalysis:null,
+  vitals:{bpSys:'',bpDia:'',hr:'',spo2:'',temp:'',duration:''},
+  vitalsFlags:{}, vitalsWarnings:{},
+  conditions:[], meds:[],
+  familyHistory:'', familyChips:[],
+  anamnesis:'',
+  wordCount:'0 kelime · 0 karakter',
+  completion:0,
+  labsNote:'Henüz veri girilmedi',
+  labs:{hgb:{val:'',cls:''},crp:{val:'',cls:''},bnp:{val:'',cls:''}},
+  footerWarnHtml:'<div style="font-size:12px;color:var(--text3);font-weight:500">Yeni vaka — lütfen klinik verileri girin.</div>'
+};
+
+function openNewCase() {
+  selectedCaseId = null;
+  var bc = document.getElementById('form-bc-code');
+  if (bc) bc.textContent = 'Yeni Vaka';
+  var tc = document.getElementById('form-title-code');
+  if (tc) tc.textContent = 'YENİ VAKA';
+  var lBody = document.getElementById('form-left-body');
+  if (lBody) lBody.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text3);font-size:13px"><em>Demografik ve vital bilgileri giriniz.</em></div>';
+  var rBody = document.getElementById('form-right-body');
+  if (rBody) rBody.innerHTML =
+    '<textarea class="fta" placeholder="Anamnez ve başvuru şikayetini buraya yazın..."></textarea>' +
+    '<div class="fta-meta"><span class="fta-cnt">0 kelime · 0 karakter</span>' +
+      '<button class="btn-passive" title="Prototipte aktif değil">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>' +
+        'Metinden Otomatik Doldur</button></div>' +
+    '<div style="padding:9px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border-light)">' +
+      '<span style="font-size:12px;color:var(--text3)">Yeni vaka — tüm alanlar boştur. Verileri girerek analizi başlatabilirsiniz.</span>' +
+    '</div>' +
+    '<div><div class="fs-title">Laboratuvar Değerleri (Opsiyonel)</div><div class="fg3">' +
+      '<div class="fg-1"><label class="fl">Hgb (g/dL)</label><input class="fi mono" placeholder="—" readonly></div>' +
+      '<div class="fg-1"><label class="fl">CRP (mg/L)</label><input class="fi mono" placeholder="—" readonly></div>' +
+      '<div class="fg-1"><label class="fl">BNP (pg/mL)</label><input class="fi mono" placeholder="—" readonly></div>' +
+    '</div></div>';
+  var ffL = document.getElementById('form-ff-l');
+  if (ffL) ffL.innerHTML = '<div style="font-size:12px;color:var(--text3)">Yeni vaka — veri bekleniyor.</div>';
+  goTo('case-form');
+}
+
+/* ══════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════ */
+let selectedCaseId = 'ACB-2024-00847';
+let currentAiResponses = {};
+let freeIdx = 0;
+
+/* ══════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════ */
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  var el = document.getElementById('s-' + id);
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'results') setTimeout(animateBars, 200);
+}
+
+function openCase(id) {
+  var c = CASES[id];
+  if (!c) return;
+  selectedCaseId = id;
+  renderForm(c);
+  if (c.status === 'pending') {
+    goTo('case-form');
+  } else {
+    renderResults(c);
+    goTo('results');
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   CLOCK
+══════════════════════════════════════════════════════ */
+function tick() {
+  var t = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+  ['clk1','clk2','clk3'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = t;
+  });
+}
+tick();
+setInterval(tick, 10000);
+
+/* ══════════════════════════════════════════════════════
+   ANALYSIS LOADING MODAL
+══════════════════════════════════════════════════════ */
+var ldSteps = [
+  'Klinik veriler işleniyor...',
+  'Anamnez metni analiz ediliyor...',
+  'Risk modeli çalıştırılıyor...',
+  'Sonuçlar hazırlanıyor...'
+];
+var ldPcts = [20, 45, 75, 98];
+
+function startAnalysis() {
+  var modal = document.getElementById('ld-modal');
+  var stepEl = document.getElementById('ld-step');
+  var fillEl = document.getElementById('ld-fill');
+  if (!modal) return;
+  modal.classList.add('on');
+  var i = 0;
+  function next() {
+    if (i < ldSteps.length) {
+      stepEl.textContent = ldSteps[i];
+      fillEl.style.width = ldPcts[i] + '%';
+      ['d0','d1','d2','d3'].forEach(function(did, j) {
+        var dot = document.getElementById(did);
+        if (dot) { dot.className = 'ld-dot'; if (j === i) dot.classList.add('on'); }
+      });
+      i++;
+      setTimeout(next, i < ldSteps.length ? 950 : 900);
+    } else {
+      fillEl.style.width = '100%';
+      var c = CASES[selectedCaseId];
+      setTimeout(function() {
+        modal.classList.remove('on');
+        renderResults(c);
+        goTo('results');
+      }, 400);
+    }
+  }
+  next();
+}
+
+/* ══════════════════════════════════════════════════════
+   RENDER: FORM SCREEN
+══════════════════════════════════════════════════════ */
+function renderForm(c) {
+  var bc = document.getElementById('form-bc-code');
+  if (bc) bc.textContent = c.code;
+  var tc = document.getElementById('form-title-code');
+  if (tc) tc.textContent = c.code;
+
+  var lBody = document.getElementById('form-left-body');
+  if (lBody) {
+    var spO2Cls = c.vitalsFlags.spo2 || '';
+    var bpSysCls = c.vitalsFlags.bpSys || '';
+    var hrCls = c.vitalsFlags.hr || '';
+    var condAll = ['Tip 2 DM','Hipertansiyon','KOAH','KAH','Hiperlipidemi','Hashimoto Tiroiditi'];
+    var condChips = condAll.map(function(cn) {
+      return '<span class="chip' + (c.conditions.indexOf(cn) >= 0 ? ' on' : '') + '">' + cn + '</span>';
+    }).join('');
+    var medsHtml = c.meds.length > 0
+      ? c.meds.map(function(m) {
+          return '<div class="drug-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' + m + '</div>';
+        }).join('')
+      : '<div style="font-size:12.5px;color:var(--text3);padding:8px 0;">Bilinen ilaç kullanımı yok</div>';
+    var famChips = ['Kardiyovasküler Hastalık','DM','Kanser','İnme'];
+    var famChipsHtml = famChips.map(function(fc) {
+      return '<span class="chip' + (c.familyChips.indexOf(fc) >= 0 ? ' on' : '') + '">' + fc + '</span>';
+    }).join('');
+    var famNoteHtml = (c.familyHistory && c.familyHistory !== 'Bilinmiyor')
+      ? '<div style="margin-top:8px;padding:8px 11px;background:var(--amber-dim2);border-radius:7px;border:1px solid rgba(201,123,26,.14)"><span style="font-size:12px;color:var(--amber);font-weight:500">' + c.familyHistory + '</span></div>'
+      : '';
+    var warnBpSys = c.vitalsWarnings.bpSys ? '<div class="f-warn">' + c.vitalsWarnings.bpSys + '</div>' : '';
+    var warnHr    = c.vitalsWarnings.hr    ? '<div class="f-warn">' + c.vitalsWarnings.hr    + '</div>' : '';
+    var warnSpo2  = c.vitalsWarnings.spo2  ? '<div class="f-warn red">' + c.vitalsWarnings.spo2 + '</div>' : '';
+    var labHgb = (c.labs && (c.labs.hgb !== undefined ? c.labs.hgb : '—')) || '—';
+    var labCrp = (c.labs && (c.labs.crp !== undefined ? c.labs.crp : '—')) || '—';
+    var labBnpVal = (c.labs && c.labs.bnp) ? (c.labs.bnp.val !== undefined ? c.labs.bnp.val : c.labs.bnp) : '—';
+    var labBnpCls = (c.labs && c.labs.bnp && c.labs.bnp.cls) ? c.labs.bnp.cls : '';
+
+    lBody.innerHTML =
+      '<div class="fs"><div class="fs-title">Demografik Bilgiler</div>' +
+      '<div class="fg3">' +
+        '<div class="fg-1"><label class="fl">Yaş</label><input class="fi mono" value="' + c.age + '" readonly></div>' +
+        '<div class="fg-1"><label class="fl">Cinsiyet</label><input class="fi mono" value="' + (c.sex === 'E' ? 'Erkek' : 'Kadın') + '" readonly></div>' +
+        '<div class="fg-1"><label class="fl">VKİ</label><input class="fi mono" value="' + c.bmi + '" readonly></div>' +
+      '</div>' +
+      '<div class="fg" style="margin-top:9px">' +
+        '<div class="fg-1"><label class="fl">Boy (cm)</label><input class="fi mono" value="' + c.height + '" readonly></div>' +
+        '<div class="fg-1"><label class="fl">Kilo (kg)</label><input class="fi mono" value="' + c.weight + '" readonly></div>' +
+      '</div></div>' +
+      '<div class="fs"><div class="fs-title">Vital Bulgular</div><div class="fg">' +
+        '<div class="fg-1"><label class="fl">Tansiyon Sis. (mmHg)</label><input class="fi mono' + (bpSysCls ? ' '+bpSysCls : '') + '" value="' + c.vitals.bpSys + '" readonly>' + warnBpSys + '</div>' +
+        '<div class="fg-1"><label class="fl">Tansiyon Dias. (mmHg)</label><input class="fi mono" value="' + c.vitals.bpDia + '" readonly></div>' +
+        '<div class="fg-1"><label class="fl">Nabız (atım/dk)</label><input class="fi mono' + (hrCls ? ' '+hrCls : '') + '" value="' + c.vitals.hr + '" readonly>' + warnHr + '</div>' +
+        '<div class="fg-1"><label class="fl">SpO2 (%)</label><input class="fi mono' + (spO2Cls ? ' '+spO2Cls : '') + '" value="' + c.vitals.spo2 + '" readonly>' + warnSpo2 + '</div>' +
+        '<div class="fg-1"><label class="fl">Ateş (°C)</label><input class="fi mono" value="' + c.vitals.temp + '" readonly></div>' +
+        '<div class="fg-1"><label class="fl">Şikayet Süresi</label><input class="fi mono" value="' + c.vitals.duration + '" readonly></div>' +
+      '</div></div>' +
+      '<div class="fs"><div class="fs-title">Kronik Hastalıklar</div><div class="chips">' + condChips + '</div></div>' +
+      '<div class="fs"><div class="fs-title">Aktif İlaçlar</div><div style="display:flex;flex-direction:column;gap:5px">' + medsHtml + '</div></div>' +
+      '<div class="fs" style="margin-bottom:0"><div class="fs-title">Aile Öyküsü</div><div class="chips">' + famChipsHtml + '</div>' + famNoteHtml + '</div>';
+  }
+
+  var rBody = document.getElementById('form-right-body');
+  if (rBody) {
+    var labHgbVal = (c.labs && c.labs.hgb !== undefined) ? c.labs.hgb : '—';
+    var labCrpVal = (c.labs && c.labs.crp !== undefined) ? c.labs.crp : '—';
+    var bnpVal = (c.labs && c.labs.bnp) ? (c.labs.bnp.val !== undefined ? c.labs.bnp.val : c.labs.bnp) : '—';
+    var bnpCls = (c.labs && c.labs.bnp && c.labs.bnp.cls) ? ' ' + c.labs.bnp.cls : '';
+    rBody.innerHTML =
+      '<textarea class="fta" readonly>' + c.anamnesis + '</textarea>' +
+      '<div class="fta-meta"><span class="fta-cnt">' + c.wordCount + '</span>' +
+        '<button class="btn-passive" title="Prototipte aktif değil">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>' +
+          'Metinden Otomatik Doldur</button></div>' +
+      '<div style="padding:9px 12px;background:var(--amber-dim2);border-radius:8px;border:1px solid rgba(201,123,26,.14)">' +
+        '<span style="font-size:12px;color:var(--amber);font-weight:600">⚠</span>' +
+        '<span style="font-size:12px;color:var(--amber);margin-left:5px">Laboratuvar verileri eklenirse değerlendirme daha kapsamlı olabilir.</span>' +
+      '</div>' +
+      '<div><div class="fs-title">Laboratuvar Değerleri (Opsiyonel)</div><div class="fg3">' +
+        '<div class="fg-1"><label class="fl">Hgb (g/dL)</label><input class="fi mono" value="' + labHgbVal + '" placeholder="—" readonly></div>' +
+        '<div class="fg-1"><label class="fl">CRP (mg/L)</label><input class="fi mono" value="' + labCrpVal + '" placeholder="—" readonly></div>' +
+        '<div class="fg-1"><label class="fl">BNP (pg/mL)</label><input class="fi mono' + bnpCls + '" value="' + bnpVal + '" placeholder="—" readonly></div>' +
+      '</div></div>';
+  }
+
+  var ffL = document.getElementById('form-ff-l');
+  if (ffL) {
+    ffL.innerHTML = c.footerWarnHtml +
+      '<div style="font-size:11px;color:var(--text3)">Form %' + c.completion + ' tamamlandı · ' + c.labsNote + '</div>';
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   SVG HELPERS
+══════════════════════════════════════════════════════ */
+function svgCrit() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+}
+function svgWarn() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>';
+}
+function svgTrend() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>';
+}
+function svgInfo() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+}
+function svgGrid() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>';
+}
+function svgWave() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>';
+}
+function svgChevron() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';
+}
+
+/* ══════════════════════════════════════════════════════
+   RENDER: RESULTS SCREEN
+══════════════════════════════════════════════════════ */
+function renderResults(c) {
+  var el = document.getElementById('res-left');
+  if (!el) return;
+
+  // Breadcrumb
+  var bc = document.getElementById('res-bc-code');
+  if (bc) bc.textContent = c.code;
+
+  // Colour logic based on risk level
+  var scoreColor, barStyle, lvlBadgeStyle;
+  if (c.overallLvlClass === 'hi') {
+    scoreColor = 'var(--red)';
+    barStyle = 'background:linear-gradient(90deg,#C93535,#E55555,#EF8040)';
+    lvlBadgeStyle = 'background:rgba(201,53,53,.28);border:1px solid rgba(201,53,53,.38);color:#FF9090';
+  } else if (c.overallLvlClass === 'md') {
+    scoreColor = 'var(--amber)';
+    barStyle = 'background:linear-gradient(90deg,#C97B1A,#E09830)';
+    lvlBadgeStyle = 'background:rgba(201,123,26,.22);border:1px solid rgba(201,123,26,.30);color:#FFBC6E';
+  } else {
+    scoreColor = '#7A8FA8';
+    barStyle = 'background:linear-gradient(90deg,#7A8FA8,#9AAEC5)';
+    lvlBadgeStyle = 'background:var(--surface2);border:1px solid var(--border);color:#7A8FA8';
+  }
+
+  var html = '';
+
+  // ── 1. Overall score card ──
+  html +=
+    '<div class="a0">' +
+      '<div class="sec-hd">' +
+        '<div class="ico-wrap teal">' + svgWave() + '</div>' +
+        '<div class="sec-hd-title">Genel Risk Değerlendirmesi</div>' +
+        '<span style="margin-left:auto;font-size:11px;color:var(--text3);font-family:var(--f-mono)">' + (c.lastAnalysis || '—') + '<span class="dtag" style="margin-left:6px">Demo İçeriği</span></span>' +
+      '</div>' +
+      '<div class="grs-card">' +
+        '<div class="grs-top">' +
+          '<div class="grs-top-left">' +
+            '<div class="grs-eyebrow">Genel Risk Skoru</div>' +
+            '<div class="grs-title">Hastanın Genel Klinik Risk Değerlendirmesi</div>' +
+            '<div class="grs-summary">' + c.overallSummary + '</div>' +
+          '</div>' +
+          '<div class="grs-top-right">' +
+            '<div class="grs-lvl-badge" style="' + lvlBadgeStyle + '">' + c.overallLabel + '</div>' +
+            '<div class="grs-score-display">' +
+              '<span class="grs-num" style="color:' + scoreColor + '">' + c.overallScore + '</span>' +
+              '<span class="grs-denom">/100</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="grs-body">' +
+          '<div class="grs-bar-wrap">' +
+            '<div class="grs-bar-bg"><div class="grs-bar-fill" style="width:0;' + barStyle + '" data-w="' + c.overallScore + '%"></div></div>' +
+            '<span class="grs-bar-pct" style="color:' + scoreColor + '">' + c.overallScore + ' / 100</span>' +
+          '</div>' +
+          '<div class="grs-foot">' +
+            '<div class="grs-meta">' +
+              '<div class="grs-meta-item">' + svgInfo() + c.code + ' · ' + (c.sex === 'E' ? 'Erkek' : 'Kadın') + ', ' + c.age + ' yaş</div>' +
+              '<div class="grs-meta-item">' + svgInfo() + c.metaLongitudinal + '</div>' +
+              '<div class="grs-meta-item">' + svgWave() + c.metaSystems + '</div>' +
+            '</div>' +
+            '<div style="display:flex;gap:14px">' +
+              '<span class="rc-detail" onclick="scrollToFactors()">Katkı faktörlerini gör ↓</span>' +
+              '<span class="rc-detail" onclick="toggleBreakdown()">Detaylı kırılım ↓</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  // ── 2. Critical alerts ──
+  var alertsHtml = c.alerts.map(function(a) {
+    return '<div class="al-item ' + a.cls + '">' + (a.cls === 'crit' ? svgCrit() : svgWarn()) +
+      '<div class="al-txt"><strong>' + a.bold + '</strong> ' + a.text + '</div></div>';
+  }).join('');
+  html +=
+    '<div class="card a1">' +
+      '<div class="card-hd"><div style="display:flex;align-items:center;gap:8px">' +
+        '<div class="ico-wrap red">' + svgWarn() + '</div>' +
+        '<div class="card-title">Kritik Uyarılar</div>' +
+      '</div></div>' +
+      '<div class="card-bd" style="padding:12px"><div class="al-list">' + alertsHtml + '</div></div>' +
+    '</div>';
+
+  // ── 3. Contributing factors ──
+  var facHtml = c.factors.map(function(f) {
+    return '<div class="fac" onclick="this.classList.toggle(\'open\')">' +
+      '<div class="fac-row"><span class="fac-name">' + f.name + '</span><span class="fac-pct">' + f.pct + '</span></div>' +
+      '<div class="fac-bar-bg"><div class="fac-fill ' + f.cls + '" style="width:0" data-w="' + f.bar + '%"></div></div>' +
+      '<div class="fac-desc">' + f.desc + '</div>' +
+    '</div>';
+  }).join('');
+  html +=
+    '<div class="card a2" id="factors-card">' +
+      '<div class="card-hd">' +
+        '<div style="display:flex;align-items:center;gap:8px"><div class="ico-wrap teal">' + svgCrit() + '</div><div class="card-title">Bu Hasta Neden Yüksek Riskli?</div></div>' +
+        '<span style="font-size:11px;color:var(--text3)">' + c.factorsTitle + '</span>' +
+      '</div>' +
+      '<div class="card-bd">' +
+        '<div style="font-size:11.5px;color:var(--text3);margin-bottom:12px;font-style:italic">Faktöre tıklayarak klinik açıklamayı görebilirsiniz.</div>' +
+        '<div class="fac-list">' + facHtml + '</div>' +
+      '</div>' +
+    '</div>';
+
+  // ── 4. Missing clinical info ──
+  var missingHtml = c.missing.map(function(m) {
+    return '<div class="mi-item">' +
+      '<div class="mi-dot ' + m.dot + '"></div>' +
+      '<div class="mi-body">' +
+        '<div class="mi-name">' + m.name + '</div>' +
+        '<div class="mi-desc">' + m.desc + '</div>' +
+        (m.note ? '<div class="mi-note">' + m.note + '</div>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+  html +=
+    '<div class="card a3">' +
+      '<div class="card-hd">' +
+        '<div style="display:flex;align-items:center;gap:8px"><div class="ico-wrap amber">' + svgCrit() + '</div><div class="card-title">Eksik Klinik Bilgiler</div></div>' +
+        '<span style="font-size:11px;color:var(--text3)">Değerlendirmeyi güçlendirebilecek veriler</span>' +
+      '</div>' +
+      '<div class="card-bd" style="padding:12px"><div class="mi-list">' + missingHtml + '</div></div>' +
+    '</div>';
+
+  // ── 5. Clinical trajectory ──
+  if (c.trajectory) {
+    var tr = c.trajectory;
+    var yrsHtml = tr.years.map(function(yr) {
+      var conHtml = (yr.con && !yr.cur) ? '<div class="ks-connector ' + yr.con + '"></div>' : '';
+      var dotCls = yr.cur ? 'cur' : yr.dot;
+      return '<div class="ks-yr' + (yr.cur ? ' c' : '') + '">' +
+        '<div class="ks-dot ' + dotCls + '"></div>' + conHtml +
+        '<div class="ks-yr-lbl">' + yr.y + '</div>' +
+        '<div class="ks-yr-val"' + (yr.c ? ' style="color:' + yr.c + '"' : '') + '>' + yr.lbl + '</div>' +
+      '</div>';
+    }).join('');
+    var chipsHtml = tr.chips.map(function(ch) {
+      return '<div class="ks-chip ' + ch.cls + '">' + ch.label + '</div>';
+    }).join('');
+    html +=
+      '<div class="a4">' +
+        '<div class="sec-hd"><div class="ico-wrap navy">' + svgTrend() + '</div><div class="sec-hd-title">Klinik Seyir Öngörüsü</div></div>' +
+        '<div class="ks-box">' +
+          '<div class="ks-top">' +
+            '<div class="ks-top-icon">' + svgTrend() + '</div>' +
+            '<div class="ks-top-text">' +
+              '<div class="ks-lbl-sm">Longitudinal Veriye Dayalı Öngörü</div>' +
+              '<div class="ks-verdict">' + tr.verdict + '</div>' +
+              '<div class="ks-verdict-sub">' + tr.sub + '</div>' +
+            '</div>' +
+            '<div class="ks-badge">' + svgTrend() + tr.badge + '</div>' +
+          '</div>' +
+          '<div class="ks-body">' +
+            '<div><div style="font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Risk Yükü Zaman Çizelgesi</div>' +
+            '<div class="ks-timeline">' + yrsHtml + '</div></div>' +
+            '<div class="ks-meta-row">' + chipsHtml + '</div>' +
+            '<div class="ks-note">' + tr.note + '</div>' +
+            '<div style="font-size:10.5px;color:var(--text4);margin-top:8px;font-style:italic">' +
+              (tr.hasHistory
+                ? 'Bu vaka için geçmiş yıllara ait longitudinal veri görünümü mevcuttur.'
+                : 'Bu vaka için önceki yıllara ait longitudinal kayıt bulunmamaktadır. Görünüm mevcut başvuru verisine dayanmaktadır.') +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  // ── 6. Detailed breakdown (collapsible) ──
+  if (c.breakdown) {
+    var bk = c.breakdown;
+    var bkSysHtml = bk.systems.map(function(s) {
+      var dRows = s.diseases.map(function(d) {
+        return '<div class="bk-disease-item">' +
+          '<span class="bk-disease-name">' + d.name + '</span>' +
+          '<div style="display:flex;align-items:center;gap:6px">' +
+            '<span class="bk-disease-lvl ' + d.cls + '">' + d.lbl + '</span>' +
+            '<span class="bk-disease-score">' + d.s + '</span>' +
+          '</div></div>';
+      }).join('');
+      return '<div class="bk-cat ' + s.cat + '">' +
+        '<div class="bk-cat-top">' +
+          '<div class="bk-cat-label">' + s.label + '</div>' +
+          '<div class="bk-cat-name">' + s.name + '</div>' +
+          '<div class="bk-lvl ' + s.lvlCls + '">' + s.lvl + '</div>' +
+          '<div class="bk-score-row"><span class="bk-num">' + s.score + '</span><span class="bk-den">/100</span></div>' +
+          '<div class="bk-bar-bg"><div class="bk-bar-fill" style="width:0" data-w="' + s.score + '%"></div></div>' +
+        '</div>' +
+        '<div class="bk-detail">' + dRows + '</div>' +
+      '</div>';
+    }).join('');
+    html +=
+      '<div class="a5" id="breakdown-section">' +
+        '<div class="breakdown-wrap" id="breakdown-wrap">' +
+          '<div class="breakdown-hd" onclick="toggleBreakdown()">' +
+            '<div class="breakdown-hd-left">' +
+              '<div class="ico-wrap slate">' + svgGrid() + '</div>' +
+              '<span class="breakdown-title">Detaylı Risk Kırılımı</span>' +
+              '<span class="breakdown-sub"> — Sistem bazında değerlendirme</span>' +
+            '</div>' +
+            '<div class="breakdown-chevron">' + svgChevron() + '</div>' +
+          '</div>' +
+          '<div class="breakdown-body">' +
+            '<div class="breakdown-intro">Bu bölüm, genel risk skorunun sistem bazındaki kırılımını sunmaktadır. Kategori skorları birbirinden bağımsız hesaplanmıştır; bireysel klinik bağlamda yorumlanmalıdır.</div>' +
+            '<div class="bk-grid">' + bkSysHtml + '</div>' +
+            '<div style="font-size:11px;color:var(--text3);line-height:1.65;padding-top:8px;border-top:1px solid var(--border-light)">Kategori skorları birbirinden bağımsız hesaplanmıştır ve genel skoru doğrudan toplamaz.</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  // ── Disclaimer ──
+  html +=
+    '<div class="disc a5">' +
+      svgInfo() +
+      '<p>Verity bir klinik karar destek sistemidir. Üretilen risk skorları, uyarılar ve seyir öngörüleri tıbbi tanı niteliği taşımaz; hekim kararının yerini alamaz. <strong>Nihai klinik karar sorumluluğu hekime aittir. [Prototip Demo Modu]</strong></p>' +
+    '</div>';
+
+  el.innerHTML = html;
+
+  // ── Reset AI chat ──
+  freeIdx = 0;
+  currentAiResponses = c.aiResponses || {};
+  var msgs = document.getElementById('chat-msgs');
+  if (msgs && c.aiGreeting) {
+    msgs.innerHTML =
+      '<div class="msg a">' +
+        '<div class="msg-b">' + c.aiGreeting + '</div>' +
+        '<div class="msg-tags"><span class="mtag model">Model Analizi</span><span class="mtag">Demo İçeriği</span></div>' +
+      '</div>';
+  }
+  var suggBtns = document.getElementById('sugg-btns');
+  if (suggBtns) {
+    suggBtns.innerHTML = (c.aiSuggestions || []).map(function(q) {
+      return '<button class="sugg-btn" data-q="' + q.replace(/"/g, '&quot;') + '">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>' + q +
+      '</button>';
+    }).join('');
+    suggBtns.querySelectorAll('button[data-q]').forEach(function(btn) {
+      btn.addEventListener('click', function() { sendQ(btn, btn.getAttribute('data-q')); });
+    });
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   ANIMATE BARS
+══════════════════════════════════════════════════════ */
+function animateBars() {
+  document.querySelectorAll('#res-left [data-w]').forEach(function(el) {
+    setTimeout(function() { el.style.width = el.dataset.w; }, 50);
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   BREAKDOWN TOGGLE
+══════════════════════════════════════════════════════ */
+function toggleBreakdown() {
+  var wrap = document.getElementById('breakdown-wrap');
+  if (!wrap) return;
+  var wasOpen = wrap.classList.contains('open');
+  wrap.classList.toggle('open');
+  if (!wasOpen) {
+    setTimeout(function() {
+      wrap.querySelectorAll('[data-w]').forEach(function(el) { el.style.width = el.dataset.w; });
+    }, 60);
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function scrollToFactors() {
+  var el = document.getElementById('factors-card');
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ══════════════════════════════════════════════════════
+   AI CHAT
+══════════════════════════════════════════════════════ */
+var freeResponses = [
+  'Mevcut veriler esas olarak bu vakadaki öncelikli sisteme işaret etmektedir. Sorunuzu daha spesifik hale getirirseniz daha odaklı değerlendirme sunabilirim.',
+  'Risk yükü bu hastada birden fazla faktörün birleşiminden kaynaklanmaktadır. Hangi konuyu öncelikli olarak değerlendirmemi istersiniz?',
+  'Longitudinal veri örüntüsü göz önüne alındığında, mevcut tablonun erken dönemde değerlendirilmesi önemlidir. Belirli bir bulgu veya kriter hakkında soru sorabilirsiniz.'
+];
+
+function addMsg(role, html) {
+  var msgs = document.getElementById('chat-msgs');
+  if (!msgs) return;
+  var div = document.createElement('div');
+  div.className = 'msg ' + (role === 'user' ? 'u' : 'a');
+  if (role === 'user') {
+    div.innerHTML = '<div class="msg-b">' + html + '</div>';
+  } else {
+    div.innerHTML = '<div class="msg-b">' + html + '</div><div class="msg-tags"><span class="mtag model">Model Analizi</span></div>';
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function sendQ(btn, q) {
+  btn.style.display = 'none';
+  addMsg('user', q);
+  var ty = document.getElementById('typing-ind');
+  if (ty) ty.classList.add('show');
+  var msgs = document.getElementById('chat-msgs');
+  if (msgs) msgs.scrollTop = 99999;
+  var resp = currentAiResponses[q] || freeResponses[freeIdx % freeResponses.length];
+  setTimeout(function() {
+    if (ty) ty.classList.remove('show');
+    addMsg('assistant', resp);
+  }, 1400 + Math.random() * 500);
+}
+
+function sendFree() {
+  var inp = document.getElementById('chat-in');
+  if (!inp) return;
+  var val = inp.value.trim();
+  if (!val) return;
+  addMsg('user', val);
+  inp.value = '';
+  var ty = document.getElementById('typing-ind');
+  if (ty) ty.classList.add('show');
+  var msgs = document.getElementById('chat-msgs');
+  if (msgs) msgs.scrollTop = 99999;
+  var keys = Object.keys(currentAiResponses);
+  var match = null;
+  for (var k = 0; k < keys.length; k++) {
+    if (val.toLowerCase().indexOf(keys[k].split(' ')[0].toLowerCase()) >= 0) {
+      match = keys[k];
+      break;
+    }
+  }
+  var resp = match ? currentAiResponses[match] : freeResponses[freeIdx++ % freeResponses.length];
+  setTimeout(function() {
+    if (ty) ty.classList.remove('show');
+    addMsg('assistant', resp);
+  }, 1400 + Math.random() * 600);
+}
+
+/* ══════════════════════════════════════════════════════
+   INIT — pre-load default case so login → dashboard works
+══════════════════════════════════════════════════════ */
+renderForm(CASES['ACB-2024-00847']);
+renderResults(CASES['ACB-2024-00847']);
+
+</script>
+</body>
+</html>
