@@ -67,19 +67,20 @@ export default function DashboardScreen({ setScreen, setSelectedCase }) {
                             <button className="btn-ghost" onClick={() => handleNewCase()}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 12, height: 12 }}><path d="M12 5v14M5 12h14" /></svg>Yeni Vaka</button>
                         </div>
                         <table className="dt">
-                            <thead><tr><th>Hasta Kodu</th><th>Yaş / Cins.</th><th>Başvuru Şikayeti</th><th>Risk</th><th>Son Analiz</th><th>İşlem</th></tr></thead>
+                            <thead><tr><th>Hasta Kodu</th><th>Yaş / Cins.</th><th className="col-complaint">Başvuru Şikayeti</th><th>Risk</th><th className="hide-mobile">Son Analiz</th><th className="hide-mobile">İşlem</th></tr></thead>
                             <tbody>
                                 {caseEntries.map(([id, c]) => (
-                                    <tr key={id} style={c.riskClass === 'hi' ? { background: 'rgba(201,53,53,.025)' } : {}}>
+                                    <tr key={id} className="row-click" onClick={() => handleOpenCase(id)}
+                                        style={c.riskClass === 'hi' ? { background: 'rgba(201,53,53,.025)' } : {}}>
                                         <td><span className="pt-code">{c.code}</span></td>
                                         <td>{c.age} / {c.sex}</td>
-                                        <td style={{ color: 'var(--text2)' }}>{c.complaint.substring(0, 50)}{c.complaint.length > 50 ? '…' : ''}</td>
+                                        <td className="col-complaint" style={{ color: 'var(--text2)' }}>{c.complaint.substring(0, 40)}{c.complaint.length > 40 ? '…' : ''}</td>
                                         <td><span className={`rb ${c.riskClass}`}>{c.riskLabelShort}</span></td>
-                                        <td><span className="date">{c.lastAnalysis || '—'}</span></td>
-                                        <td>
+                                        <td className="hide-mobile"><span className="date">{c.lastAnalysis || '—'}</span></td>
+                                        <td className="hide-mobile">
                                             {c.status === 'pending'
-                                                ? <button className="tbl-btn" onClick={() => handleNewCase(id)}>Analiz Başlat</button>
-                                                : <button className={`tbl-btn ${c.riskClass === 'hi' ? 'pri' : ''}`} onClick={() => handleOpenCase(id)}>Analizi Gör</button>
+                                                ? <button className="tbl-btn" onClick={(e) => { e.stopPropagation(); handleNewCase(id); }}>Analiz Başlat</button>
+                                                : <button className={`tbl-btn ${c.riskClass === 'hi' ? 'pri' : ''}`} onClick={(e) => { e.stopPropagation(); handleOpenCase(id); }}>Analizi Gör</button>
                                             }
                                         </td>
                                     </tr>
