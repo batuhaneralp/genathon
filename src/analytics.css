@@ -1,0 +1,360 @@
+/* ═══════════════════════════════════════
+   BI ANALYTICS PANEL
+═══════════════════════════════════════ */
+.bi-panel {
+    background: var(--white);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 18px;
+    overflow: hidden
+}
+
+.bi-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between
+}
+
+.bi-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px
+}
+
+.bi-icon-wrap {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: var(--teal-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0
+}
+
+.bi-icon-wrap svg {
+    width: 16px;
+    height: 16px;
+    color: var(--teal)
+}
+
+.bi-panel-title {
+    font-family: var(--f-head);
+    font-size: 15px;
+    font-weight: 700
+}
+
+.bi-panel-sub {
+    font-size: 11.5px;
+    color: var(--text3);
+    margin-top: 1px
+}
+
+/* Filters */
+.bi-filters {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-end;
+    background: var(--surface)
+}
+
+.bi-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 3px
+}
+
+.bi-filter-lbl {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    color: var(--text3)
+}
+
+.bi-filter-sel {
+    padding: 6px 28px 6px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    background: var(--white);
+    font-family: var(--f-body);
+    font-size: 12px;
+    color: var(--text1);
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238899B0'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    transition: border-color .15s
+}
+
+.bi-filter-sel:focus {
+    border-color: var(--teal)
+}
+
+.bi-filter-clear {
+    padding: 6px 12px;
+    border-radius: 7px;
+    border: 1.5px solid var(--red);
+    color: var(--red);
+    background: var(--red-dim2);
+    font-family: var(--f-body);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    align-self: flex-end
+}
+
+.bi-filter-clear:hover {
+    background: var(--red);
+    color: #fff
+}
+
+/* Info Notes */
+.bi-info-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 16px 20px
+}
+
+.bi-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: var(--r);
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-left: 4px solid
+}
+
+.bi-info-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 700
+}
+
+.bi-info-title {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 2px
+}
+
+.bi-info-val {
+    font-family: var(--f-head);
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.2
+}
+
+.bi-info-sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px
+}
+
+/* Chart Grid */
+.bi-charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    padding: 16px 20px
+}
+
+.bi-chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r);
+    padding: 16px
+}
+
+.bi-chart-wide {
+    grid-column: 1 / -1
+}
+
+.bi-chart-title {
+    font-family: var(--f-head);
+    font-size: 12.5px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: var(--text1)
+}
+
+/* Bar Chart */
+.bi-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+}
+
+.bi-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px
+}
+
+.bi-bar-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text2);
+    width: 140px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.bi-bar-track {
+    flex: 1;
+    height: 18px;
+    background: var(--border-light);
+    border-radius: 4px;
+    overflow: hidden
+}
+
+.bi-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width .8s ease;
+    min-width: 3px
+}
+
+.bi-bar-val {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text1);
+    width: 24px;
+    text-align: right;
+    flex-shrink: 0
+}
+
+/* Donut Chart */
+.bi-donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 18px
+}
+
+.bi-donut-num {
+    font-family: var(--f-head);
+    font-size: 16px;
+    font-weight: 800;
+    fill: var(--text1)
+}
+
+.bi-donut-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1
+}
+
+.bi-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px
+}
+
+.bi-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0
+}
+
+.bi-legend-label {
+    font-weight: 500;
+    color: var(--text2)
+}
+
+.bi-legend-val {
+    margin-left: auto;
+    font-family: var(--f-mono);
+    font-weight: 600;
+    color: var(--text1)
+}
+
+.bi-legend-pct {
+    font-size: 10px;
+    color: var(--text3);
+    font-weight: 400
+}
+
+/* ── Mobile ── */
+@media(max-width:768px) {
+    .bi-info-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 12px 14px
+    }
+
+    .bi-charts-grid {
+        grid-template-columns: 1fr;
+        padding: 12px 14px
+    }
+
+    .bi-filters {
+        padding: 10px 14px
+    }
+
+    .bi-header {
+        padding: 12px 14px
+    }
+
+    .bi-bar-label {
+        width: 100px;
+        font-size: 10px
+    }
+
+    .bi-donut-wrap {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px
+    }
+}
+
+@media(max-width:480px) {
+    .bi-info-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        padding: 10px 12px
+    }
+
+    .bi-info {
+        padding: 10px 12px
+    }
+
+    .bi-info-val {
+        font-size: 14px
+    }
+
+    .bi-filter {
+        flex: 1;
+        min-width: calc(50% - 5px)
+    }
+
+    .bi-bar-label {
+        width: 80px;
+        font-size: 9.5px
+    }
+}

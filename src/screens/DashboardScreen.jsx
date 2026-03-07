@@ -1,6 +1,7 @@
 import React from 'react';
 import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
+import AnalyticsPanel from '../components/AnalyticsPanel';
 import { CASES } from '../data/cases';
 
 export default function DashboardScreen({ setScreen, setSelectedCase }) {
@@ -49,6 +50,8 @@ export default function DashboardScreen({ setScreen, setSelectedCase }) {
                             <div className="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="20 6 9 17 4 12" /></svg></div>
                         </div>
                     </div>
+
+                    <AnalyticsPanel />
 
                     {firstHigh && (
                         <div className="alert-band a2">
