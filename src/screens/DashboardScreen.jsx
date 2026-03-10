@@ -2,25 +2,17 @@ import React from 'react';
 import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
 import AnalyticsPanel from '../components/AnalyticsPanel';
-import { CASES } from '../data/cases';
-
-export default function DashboardScreen({ setScreen, setSelectedCase }) {
-    const caseEntries = Object.entries(CASES);
+export default function DashboardScreen({ setScreen, setSelectedCase, cases = {} }) {
+    const caseEntries = Object.entries(cases);
     const totalCases = caseEntries.length;
     const pendingCases = caseEntries.filter(([, c]) => c.status === 'pending').length;
-    const highRiskCases = caseEntries.filter(([, c]) => c.overallScore >= 65).length;
+    const highRiskCases = caseEntries.filter(([, c]) => c.riskClass === 'hi').length;
     const analyzedCases = caseEntries.filter(([, c]) => c.status === 'analyzed').length;
 
     const handleOpenCase = (id) => {
         setSelectedCase(id);
         setScreen('results');
     };
-    const handleNewCase = (id) => {
-        setSelectedCase(id || null);
-        setScreen('case-form');
-    };
-
-    const firstHigh = caseEntries.find(([, c]) => c.overallScore >= 65);
 
     return (
         <div id="s-dashboard" className="screen app active">
@@ -51,37 +43,25 @@ export default function DashboardScreen({ setScreen, setSelectedCase }) {
                         </div>
                     </div>
 
-                    <AnalyticsPanel />
-
-                    {firstHigh && (
-                        <div className="alert-band a2">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
-                            <div className="alert-band-txt"><strong>Yüksek Risk Uyarısı:</strong> {firstHigh[0]} numaralı vakada kritik bulgular tespit edildi.</div>
-                            <div className="alert-band-link" onClick={() => handleOpenCase(firstHigh[0])}>Vakayı Görüntüle →</div>
-                        </div>
-                    )}
+                    <AnalyticsPanel cases={cases} />
 
                     <div className="card a3">
                         <div className="card-hd">
                             <div className="card-title">Aktif Vakalar ({totalCases})</div>
-                            <button className="btn-ghost" onClick={() => handleNewCase()}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 12, height: 12 }}><path d="M12 5v14M5 12h14" /></svg>Yeni Vaka</button>
                         </div>
                         <table className="dt">
-                            <thead><tr><th>Hasta Kodu</th><th>Yaş / Cins.</th><th className="col-complaint">Başvuru Şikayeti</th><th>Risk</th><th className="hide-mobile">Son Analiz</th><th className="hide-mobile">İşlem</th></tr></thead>
+                            <thead><tr><th>Hasta Kodu</th><th>Yaş / Cins.</th><th className="col-complaint hide-mobile">Başvuru Şikayeti</th><th>Risk</th><th className="hide-mobile">Son Analiz</th><th>İşlem</th></tr></thead>
                             <tbody>
                                 {caseEntries.map(([id, c]) => (
                                     <tr key={id} className="row-click" onClick={() => handleOpenCase(id)}
                                         style={c.riskClass === 'hi' ? { background: 'rgba(201,53,53,.025)' } : {}}>
-                                        <td><span className="pt-code">{c.code}</span></td>
+                                        <td><span className="pt-code">{id.replace('VRT-', '')}</span></td>
                                         <td>{c.age} / {c.sex}</td>
-                                        <td className="col-complaint" style={{ color: 'var(--text2)' }}>{c.complaint.substring(0, 40)}{c.complaint.length > 40 ? '…' : ''}</td>
+                                        <td className="col-complaint hide-mobile" style={{ color: 'var(--text2)' }}>{c.complaint.substring(0, 40)}{c.complaint.length > 40 ? '…' : ''}</td>
                                         <td><span className={`rb ${c.riskClass}`}>{c.riskLabelShort}</span></td>
                                         <td className="hide-mobile"><span className="date">{c.lastAnalysis || '—'}</span></td>
-                                        <td className="hide-mobile">
-                                            {c.status === 'pending'
-                                                ? <button className="tbl-btn" onClick={(e) => { e.stopPropagation(); handleNewCase(id); }}>Analiz Başlat</button>
-                                                : <button className={`tbl-btn ${c.riskClass === 'hi' ? 'pri' : ''}`} onClick={(e) => { e.stopPropagation(); handleOpenCase(id); }}>Analizi Gör</button>
-                                            }
+                                        <td>
+                                            {c.status !== 'pending' && <button className={`tbl-btn ${c.riskClass === 'hi' ? 'pri' : ''}`} onClick={(e) => { e.stopPropagation(); handleOpenCase(id); }}>Analizi Gör</button>}
                                         </td>
                                     </tr>
                                 ))}
@@ -90,7 +70,6 @@ export default function DashboardScreen({ setScreen, setSelectedCase }) {
                     </div>
                 </div>
             </div>
-            <button className="fab" onClick={() => handleNewCase()}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" /></svg>Yeni Vaka Aç</button>
         </div>
     );
 }

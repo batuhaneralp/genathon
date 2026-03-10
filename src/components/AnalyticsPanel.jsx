@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { CASES } from '../data/cases';
 import { classifyPatient, getAgeInterval, getRiskCategory } from '../utils/classifyPatient';
 
 const ALL = 'Tümü';
@@ -71,8 +70,8 @@ function InfoNote({ icon, title, value, sub, color }) {
 /* ═══════════════════════════════════════
    MAIN ANALYTICS PANEL
 ═══════════════════════════════════════ */
-export default function AnalyticsPanel() {
-    const entries = Object.entries(CASES);
+export default function AnalyticsPanel({ cases = {} }) {
+    const entries = Object.entries(cases);
 
     /* ── filters ── */
     const [fGender, setFGender] = useState(ALL);
