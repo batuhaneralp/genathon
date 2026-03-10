@@ -1,0 +1,71 @@
+{
+  "hasta_id": "ANON_118322",
+  "initial_questions": [
+    {
+      "id": "q1",
+      "text": "Hastanın genel risk durumu nedir?",
+      "answer": "Hasta 40 yaşında kadın olup genel risk skoru 2.3 (46/100) (Orta) seviyesindedir. Sağlık trendi kötüleşme yönündedir (Health Velocity: -3). En kritik sistemler Hematolojik-İmmün (4/5) ve Onkolojik (4/5) olarak değerlendirilmiştir. Tiroid kanseri tanısı mevcut olup, obezite, hipertiroidizm, diyabet riski ve demir eksikliği anemisi belirtileri bulunmaktadır.",
+      "follow_ups": [
+        {
+          "id": "q1_1",
+          "text": "Onkolojik durum detayları nelerdir?",
+          "answer": "Onkolojik sistem skoru 4/5 ile yüksek risk seviyesindedir. Hastada tiroid kanseri tanısı mevcuttur. Yüksek inflamasyon bulguları nedeniyle tedavi değişikliği ve yakın takip gerekmektedir. Tiroid kanseri ile birlikte hipertiroidizm durumu tedavi planını karmaşıklaştırmaktadır. Endokrinoloji ve onkoloji koordineli takip yapılmalıdır."
+        },
+        {
+          "id": "q1_2",
+          "text": "6 aylık projeksiyon nasıl görünüyor?",
+          "answer": "Hastanın mevcut seyri devam ederse, 6 ay sonra hastaneye yatış gerektiren bir durumla karşılaşması muhtemeldir. Son 6 ayda ziyaret sıklığı artmış olup, bu kötüleşme trendini desteklemektedir. Tiroid kanseri takibi, metabolik kontrol ve demir eksikliği tedavisi ile bu seyir değiştirilebilir."
+        },
+        {
+          "id": "q1_3",
+          "text": "Hangi uyarı belirtilerine dikkat edilmeli?",
+          "answer": "Hastada şu uyarı belirtilerine dikkat edilmelidir: (1) Halsizlik ve çabuk yorulma belirtilerinin artması - demir eksikliği anemisi ve tiroid disfonksiyonunun kötüleşmesi işareti olabilir, (2) Acil durumlarda artan başvuru sayısı - genel sağlık durumunun bozulduğunun göstergesi, (3) Kardiyovasküler belirtilerin ortaya çıkması - obezite ve hipertiroidizm bu riski artırmaktadır."
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "text": "Hangi sistemlerde sorun tespit edildi?",
+      "answer": "10 sistem değerlendirilmiştir. En kritik sistemler: Hematolojik-İmmün (4/5) ve Onkolojik (4/5). Orta risk: Nörolojik-Psikiyatrik (3/5) ve Üreme-Jinekolojik (3/5). Düşük-orta risk: Metabolik-Endokrin (2/5), Kas-İskelet (2/5), Gastrointestinal (2/5). Düşük risk: Kardiyovasküler (1/5), Solunum (1/5), Renal-Hepatik (1/5).",
+      "follow_ups": [
+        {
+          "id": "q2_1",
+          "text": "Hematolojik-immün sistem detayları nelerdir?",
+          "answer": "Hematolojik-İmmün sistem skoru 4/5'tir. Ciddi anormallikler mevcut olup, özellikle inflamasyon ve otoimmün hastalık riski nedeniyle takip ve tedavi değişikliği gerekmektedir. Demir eksikliği anemisi belirtileri bulunmaktadır. Bu durum hastanın halsizlik ve çabuk yorulma şikayetlerini açıklamaktadır. Demir takviyesi ve altta yatan nedenlerin araştırılması önerilmektedir."
+        },
+        {
+          "id": "q2_2",
+          "text": "Metabolik-endokrin sistem detayları nelerdir?",
+          "answer": "Metabolik-Endokrin sistem skoru 2/5'tir ancak ciddi sorunlar mevcuttur. Tiroid fonksiyonları ciddi şekilde anormaldir ve hipertiroidizm belirtileri görülmektedir. Diyabet riski mevcut olup HbA1c ölçümü henüz yapılmamıştır - bu kritik bir eksikliktir. Obezite durumu metabolik riski artırmaktadır. Tedavi değişikliği ve yakın endokrinolojik takip gerekmektedir."
+        },
+        {
+          "id": "q2_3",
+          "text": "Azınlık görüşleri ve itirazlar nelerdir?",
+          "answer": "Uzman panelinde şu azınlık görüşleri kaydedilmiştir: (1) HbA1c değeri hiç ölçülmemiş, bu diyabet riski açısından kritik bir eksikliktir. (2) Mevcut skorun çok iyimser olduğu, kardiyovasküler ve metabolik durumlar arasında ciddi etkileşimler bulunduğu belirtilmiştir. (3) Komorbiditeler göz önünde bulundurulmadan genel sağlık durumunun değerlendirildiği eleştirisi yapılmıştır. (4) HbA1c ölçümünün yapılmamasının hastanın diyabet durumunu ve tedavi planını etkileyebileceği vurgulanmıştır."
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "text": "Öncelikli aksiyonlar ve tedavi planı nedir?",
+      "answer": "Üç öncelikli aksiyon belirlenmiştir: (1) HbA1c ölçümünün yapılması - diyabet riski değerlendirmesi için kritik, (2) Kardiyovasküler riskin değerlendirilmesi - obezite ve hipertiroidizm birlikteliği nedeniyle, (3) Endokrinoloji uzmanına yönlendirilmesi - tiroid kanseri ve hipertiroidizm yönetimi için.",
+      "follow_ups": [
+        {
+          "id": "q3_1",
+          "text": "Endokrinoloji konsültasyonu neden kritik?",
+          "answer": "Hastada tiroid kanseri tanısı ile birlikte hipertiroidizm bulunmaktadır. Bu iki durum birbiriyle doğrudan ilişkilidir ve uzman yönetimi gerektirir. Tiroid hormon düzeylerinin kontrolü, kanser takip protokolü ve tedavi rejiminin optimize edilmesi endokrinolog tarafından yapılmalıdır. Ayrıca obezite ve diyabet riski de endokrin sistemle ilişkili olup bütüncül bir yaklaşım gerekmektedir."
+        },
+        {
+          "id": "q3_2",
+          "text": "Demir eksikliği anemisi için ne yapılmalı?",
+          "answer": "Hastada demir eksikliği anemisi belirtileri mevcuttur ve bu halsizlik/çabuk yorulma şikayetlerinin ana nedenlerinden biridir. Yapılması gerekenler: (1) Tam kan sayımı ve demir parametreleri (ferritin, demir, TDBK) kontrol edilmeli, (2) Altta yatan neden araştırılmalı (GI kanama, beslenme yetersizliği, malabsorpsiyon), (3) Oral veya parenteral demir takviyesi başlanmalı, (4) Tedavi yanıtı 4-6 hafta sonra değerlendirilmeli, (5) Tiroid kanseri tedavisi ile etkileşim açısından değerlendirilmeli."
+        },
+        {
+          "id": "q3_3",
+          "text": "Takip planı nasıl olmalıdır?",
+          "answer": "Önerilen takip planı: (1) 1 ay içinde: HbA1c testi, tam kan sayımı ve demir parametreleri, tiroid fonksiyon testleri, endokrinoloji randevusu, (2) 3 ay içinde: Kardiyovasküler risk değerlendirmesi, demir tedavisi yanıtının kontrolü, tiroid kanseri takip görüntülemesi, kilo yönetimi programı başlatılması, (3) 6 ay içinde: Tüm parametrelerin kapsamlı değerlendirmesi, risk skorunun güncellenmesi, tedavi planının revize edilmesi. Ziyaret sıklığı artış trendinde olduğundan düzenli takip kritik öneme sahiptir."
+        }
+      ]
+    }
+  ]
+}

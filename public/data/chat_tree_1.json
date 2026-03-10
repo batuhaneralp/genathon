@@ -1,0 +1,71 @@
+{
+  "hasta_id": "ANON_082594",
+  "initial_questions": [
+    {
+      "id": "q1",
+      "text": "Hastanın genel risk durumu nedir?",
+      "answer": "Hasta 45 yaşında erkek olup genel risk skoru 3.3 (66/100) (Yüksek) seviyesindedir. Sağlık trendi kötüleşme yönündedir (Health Velocity: -3). Kardiyovasküler ve metabolik-endokrin sistemleri en yüksek risk skoruna (5) sahiptir. Yüksek kolesterol (259 mg/dL), yüksek trigliserid (198 mg/dL), yüksek CRP (2.72 mg/dL) ve hipertansiyon (140/85 mmHg) ana risk faktörleridir.",
+      "follow_ups": [
+        {
+          "id": "q1_1",
+          "text": "Kardiyovasküler risk detayları nelerdir?",
+          "answer": "Kardiyovasküler sistem skoru 5/5 ile en yüksek risk seviyesindedir. Yüksek kolesterol 259 mg/dL, yüksek trigliserid 198 mg/dL, yüksek CRP 2.72 mg/dL, yüksek tansiyon 140/85 mmHg ve aşırı kilolu (BMI: 28.5) olması kardiyovasküler hastalık riskini ciddi şekilde artırmaktadır. Acil olarak lipid düşürücü tedavi ve yaşam tarzı değişiklikleri değerlendirilmelidir."
+        },
+        {
+          "id": "q1_2",
+          "text": "6 aylık projeksiyon nasıl görünüyor?",
+          "answer": "Mevcut seyir devam ederse, hasta 6 ay sonra hastaneye yatış gerektiren bir duruma ulaşabilir. Acil başvuru sıklığı artabilir ve genel sağlık durumu daha da kötüleşebilir. Trend kötüleşme yönünde olduğundan, erken müdahale kritik öneme sahiptir."
+        },
+        {
+          "id": "q1_3",
+          "text": "Hangi uyarı belirtilerine dikkat edilmeli?",
+          "answer": "Hastada şu uyarı belirtilerine dikkat edilmelidir: (1) Yüksek tansiyon belirtileri - baş ağrısı, görme bozukluğu, (2) Göğüs ağrısı veya nefes darlığı, (3) Aşırı kilo artışı veya kilo kaybı. Bu belirtilerden herhangi biri görüldüğünde acil değerlendirme yapılmalıdır."
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "text": "Hangi sistemlerde sorun tespit edildi?",
+      "answer": "10 sistem değerlendirilmiştir. En kritik sistemler: Kardiyovasküler (5/5) ve Metabolik-Endokrin (5/5). Orta-yüksek risk: Hematolojik-İmmün (4/5). Orta risk: Solunum (3/5), Kas-İskelet (3/5), Nörolojik-Psikiyatrik (3/5), Gastrointestinal (3/5), Üreme-Jinekolojik (3/5). Düşük risk: Renal-Hepatik (2/5), Onkolojik (2/5).",
+      "follow_ups": [
+        {
+          "id": "q2_1",
+          "text": "Metabolik-endokrin sistem detayları nelerdir?",
+          "answer": "Metabolik-Endokrin sistem skoru 5/5'tir. Yüksek kolesterol ve trigliserid seviyeleri kardiyovasküler hastalık riskini artırmaktadır. Yüksek CRP (2.72 mg/dL) inflamasyon belirtisidir ve takip edilmelidir. Önemli not: HbA1c verisi eksiktir, bu da diyabet riski değerlendirmesini zorlaştırmaktadır. HbA1c testi acil olarak yapılmalıdır."
+        },
+        {
+          "id": "q2_2",
+          "text": "Gastrointestinal sistem hakkında bilgi verir misiniz?",
+          "answer": "Gastrointestinal sistem skoru 3/5 (orta risk) seviyesindedir. Hastada fonksiyonel dispepsi tanısı mevcuttur. Yüksek kolesterol ve trigliserid seviyeleri için diyet ve yaşam tarzı değişiklikleri önerilmelidir. Beslenme düzeninin iyileştirilmesi hem GI semptomları hem de metabolik parametreleri olumlu etkileyebilir."
+        },
+        {
+          "id": "q2_3",
+          "text": "Azınlık görüşleri ve itirazlar nelerdir?",
+          "answer": "Uzman panelinde şu azınlık görüşleri kaydedilmiştir: (1) Eksik HbA1c verisi, diyabet riski değerlendirmesi açısından kritik bir eksikliktir. (2) Mevcut skorun çok iyimser olduğu, kardiyovasküler ve metabolik risk faktörleri göz önüne alındığında hastanın durumunun daha ciddi olduğu belirtilmiştir. (3) Sistemler arası etkileşimlerin daha kapsamlı değerlendirilmesi gerektiği vurgulanmıştır."
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "text": "Öncelikli aksiyonlar ve tedavi planı nedir?",
+      "answer": "Üç öncelikli aksiyon belirlenmiştir: (1) HbA1c testi yapılmalı - diyabet riski değerlendirmesi için kritik, (2) Diyet ve yaşam tarzı değişiklikleri önerilmeli - kilo kontrolü, kolesterol ve trigliserid yönetimi için, (3) Kardiyovasküler ve metabolik durum düzenli olarak izlenmeli.",
+      "follow_ups": [
+        {
+          "id": "q3_1",
+          "text": "HbA1c testi neden bu kadar önemli?",
+          "answer": "HbA1c testi, son 2-3 aylık ortalama kan şekeri düzeyini gösterir ve diyabet tanısı için altın standarttır. Hastanın yüksek kolesterol, trigliserid, CRP ve BMI değerleri diyabet için ciddi risk faktörleridir. Azınlık görüşlerinde de bu eksikliğin kritik olduğu vurgulanmıştır. HbA1c ≥6.5% ise diyabet tanısı konulabilir ve tedavi planı buna göre şekillendirilmelidir."
+        },
+        {
+          "id": "q3_2",
+          "text": "Yaşam tarzı değişiklikleri için öneriler nelerdir?",
+          "answer": "BMI 28.5 olan hasta için: (1) Düşük yağlı, lif açısından zengin diyet programı başlatılmalı, (2) Haftada en az 150 dakika orta yoğunlukta aerobik egzersiz önerilmeli, (3) Tuz alımı kısıtlanmalı (hipertansiyon kontrolü için), (4) Kilo hedefi belirlenmeli (%5-10 kilo kaybı metabolik parametreleri önemli ölçüde iyileştirebilir), (5) Sigara ve alkol kullanımı sorgulanmalı ve gerekirse bıraktırma programına yönlendirilmeli."
+        },
+        {
+          "id": "q3_3",
+          "text": "Takip planı nasıl olmalıdır?",
+          "answer": "Önerilen takip planı: (1) 1 ay içinde: HbA1c testi, lipid paneli kontrolü, tansiyon takibi, (2) 3 ay içinde: Yaşam tarzı değişikliklerinin etkinlik değerlendirmesi, ilaç tedavisi gerekiyorsa başlanması, CRP kontrolü, (3) 6 ay içinde: Tüm parametrelerin kapsamlı değerlendirmesi, risk skorunun güncellenmesi. Trend kötüleşme yönünde olduğundan düzenli takip hayati önem taşımaktadır."
+        }
+      ]
+    }
+  ]
+}

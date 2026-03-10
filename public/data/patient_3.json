@@ -1,0 +1,51 @@
+{
+  "dashboard_json": {
+    "hasta_id": "ANON_118322",
+    "genel_skor": 2.3,
+    "sistem_skorlari": {
+      "kardiyovaskuler": 1,
+      "metabolik_endokrin": 2,
+      "solunum": 1,
+      "kas_iskelet": 2,
+      "renal_hepatik": 1,
+      "hematolojik_immun": 4,
+      "onkolojik": 4,
+      "norolojik_psikiyatrik": 3,
+      "gastrointestinal": 2,
+      "ureme_jinekolojik": 3
+    },
+    "risk_seviyesi": "orta",
+    "health_velocity": -3,
+    "trend": "kotulesme"
+  },
+  "skor_gerekceleri": {
+    "kardiyovaskuler": "Hasta obez ve hipertiroidizm belirtileri gösteriyor. Diğer uzmanların değerlendirmeleri, kardiyovasküler riskin artabileceğini göstermektedir.",
+    "metabolik_endokrin": "Hastanın tiroid fonksiyonları ciddi şekilde anormal ve diyabet riski mevcut. Tedavi değişikliği ve takip gerekmektedir.",
+    "solunum": "Hasta solunum sistemi açısından normal değerlere sahip. Vital bulgular stabil ve SpO2 seviyesi yeterli.",
+    "kas_iskelet": "Obezite ve halsizlik gibi kas-iskelet sistemi üzerinde etkili olabilecek durumlar mevcut.",
+    "renal_hepatik": "Hasta verileri renal ve hepatik sistem açısından normal görünüyor.",
+    "hematolojik_immun": "Hematolojik ve immün sistemle ilgili ciddi anormallikler mevcut, özellikle inflamasyon ve otoimmün hastalık riski nedeniyle takip ve tedavi değişikliği gerekmektedir.",
+    "onkolojik": "Tiroid kanseri tanısı ve yüksek inflamasyon bulguları nedeniyle takip ve tedavi değişikliği gerekmektedir.",
+    "norolojik_psikiyatrik": "Hastanın halsizlik ve çabuk yorulma gibi belirtileri, potansiyel psikiyatrik durumları düşündürmektedir.",
+    "gastrointestinal": "Hasta obezite ve demir eksikliği anemisi ile birlikte hipertiroidizm belirtileri göstermektedir.",
+    "ureme_jinekolojik": "Hastanın hipertiroidizm durumu ve obezite ile ilişkili risk faktörleri nedeniyle takip edilmesi gerekmektedir."
+  },
+  "azinlik_gorusleri": [
+    "HbA1c değeri hiç ölçülmemiş, bu durum diyabet riski açısından kritik bir eksikliktir.",
+    "Bu skor çok iyimser, çünkü kardiyovasküler ve metabolik durumlar arasında ciddi etkileşimler var.",
+    "Komorbiditeler göz önünde bulundurulmadan genel sağlık durumu değerlendirilmiş.",
+    "HbA1c ölçümünün yapılmaması, hastanın diyabet durumunu ve tedavi planını etkileyebilir."
+  ],
+  "klinik_ozet": "40 yaşında kadın hasta, tiroid kanseri tanısı mevcut. Obezite, hipertiroidizm ve diyabet riski ile birlikte demir eksikliği anemisi belirtileri gösteriyor. Son 6 ayda ziyaret sıklığı artmış. HbA1c ölçümü yapılmamış, bu durum metabolik durumu etkileyebilir.",
+  "oncelikli_aksiyonlar": [
+    "HbA1c ölçümünün yapılması.",
+    "Kardiyovasküler riskin değerlendirilmesi.",
+    "Endokrinoloji uzmanına yönlendirilmesi."
+  ],
+  "alti_aylik_projeksiyon": "Hastanın mevcut seyri devam ederse, 6 ay sonra hastaneye yatış gerektiren bir durumla karşılaşması muhtemeldir.",
+  "uyarilar": [
+    "Halsizlik ve çabuk yorulma belirtilerinin artması.",
+    "Acil durumlarda artan başvuru sayısı.",
+    "Kardiyovasküler belirtilerin ortaya çıkması."
+  ]
+}

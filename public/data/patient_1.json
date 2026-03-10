@@ -1,0 +1,50 @@
+{
+  "dashboard_json": {
+    "hasta_id": "ANON_082594",
+    "genel_skor": 3.3,
+    "sistem_skorlari": {
+      "kardiyovaskuler": 5,
+      "metabolik_endokrin": 5,
+      "solunum": 3,
+      "kas_iskelet": 3,
+      "renal_hepatik": 2,
+      "hematolojik_immun": 4,
+      "onkolojik": 2,
+      "norolojik_psikiyatrik": 3,
+      "gastrointestinal": 3,
+      "ureme_jinekolojik": 3
+    },
+    "risk_seviyesi": "yüksek",
+    "health_velocity": -3,
+    "trend": "kotulesme"
+  },
+  "skor_gerekceleri": {
+    "kardiyovaskuler": "Yüksek kolesterol 259 mg/dL, yüksek trigliserid 198 mg/dL, yüksek CRP 2.72 mg/dL, yüksek tansiyon 140/85 mmHg, aşırı kilolu (BMI: 28.5) ile birlikte kardiyovasküler hastalık riski artmaktadır.",
+    "metabolik_endokrin": "Yüksek kolesterol ve trigliserid seviyeleri, kardiyovasküler hastalık riskini artırmakta; ayrıca yüksek CRP inflamasyon belirtisi olup, takip edilmesi gereken bir durumdur.",
+    "solunum": "Son 6 ayda ziyaret sıklığı artıyor, COVID-19 testi pozitif, yüksek CRP seviyesi inflamasyon belirtisi.",
+    "kas_iskelet": "Bel ağrısı ve aşırı kilolu olma durumu, kas-iskelet sistemi üzerinde olumsuz etkilere yol açabilir.",
+    "renal_hepatik": "Böbrek fonksiyonu normal görünmesine rağmen, lipid profili ve inflamasyon değerleri anormaldir.",
+    "hematolojik_immun": "Yüksek CRP ve lipid seviyeleri takip edilmelidir. Eksik HbA1c verisi nedeniyle diyabet riski değerlendirilmelidir.",
+    "onkolojik": "Yüksek kolesterol ve trigliserid seviyeleri, onkolojik hastalar için risk faktörleri olmaya devam etmektedir.",
+    "norolojik_psikiyatrik": "Son 6 ayda artan ziyaret sıklığı ve mevcut aktif problemler, takip gerektiren orta derecede anormallik göstermektedir.",
+    "gastrointestinal": "Fonksiyonel dispepsi tanısı mevcut, yüksek kolesterol ve trigliserid seviyeleri için diyet ve yaşam tarzı değişiklikleri önerilmeli.",
+    "ureme_jinekolojik": "Genital kızarıklık ve yüksek lipid seviyeleri nedeniyle takip gereklidir."
+  },
+  "azinlik_gorusleri": [
+    "Eksik HbA1c verisi, diyabet riski değerlendirmesi açısından kritik bir eksikliktir.",
+    "Bu skor çok iyimser, çünkü kardiyovasküler ve metabolik risk faktörleri göz önüne alındığında, hastanın durumu daha ciddidir.",
+    "Sistemler arası etkileşimler daha kapsamlı bir şekilde değerlendirilmelidir."
+  ],
+  "klinik_ozet": "45 yaşında erkek hasta, yüksek kolesterol, yüksek trigliserid, yüksek CRP, hipertansiyon ve aşırı kilolu olma durumu ile başvurdu. Ayrıca, son 6 ayda artan ziyaret sıklığı ve polifarmasi mevcut. Diyabet riski değerlendirilmesi için HbA1c verisi eksik.",
+  "oncelikli_aksiyonlar": [
+    "HbA1c testi yapılmalı.",
+    "Diyet ve yaşam tarzı değişiklikleri önerilmeli.",
+    "Kardiyovasküler ve metabolik durum izlenmeli."
+  ],
+  "alti_aylik_projeksiyon": "Mevcut seyir devam ederse, hasta 6 ay sonra hastaneye yatış gerektiren bir duruma ulaşabilir. Ayrıca, acil başvuru sıklığı artabilir ve genel sağlık durumu daha da kötüleşebilir.",
+  "uyarilar": [
+    "Yüksek tansiyon belirtileri (baş ağrısı, görme bozukluğu)",
+    "Göğüs ağrısı veya nefes darlığı",
+    "Aşırı kilo artışı veya kilo kaybı"
+  ]
+}
